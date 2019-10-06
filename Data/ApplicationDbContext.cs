@@ -7,12 +7,13 @@ using Shoppur.Models;
 
 namespace Shoppur.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
         public DbSet<Shoppur.Models.Product> Product { get; set; }
+        public DbSet<Shoppur.Models.Order> Order { get; set; }
     }
 }

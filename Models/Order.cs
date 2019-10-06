@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -19,20 +20,17 @@ namespace Shoppur.Models
         // Navigational properties
         public ICollection<OrderLine> OrderLines { get; set; }
 
+        [Owned]
         public class CustomerInfo
         {
+            [DataType(DataType.EmailAddress)]
             public string Email { get; set; }
             [Required]
             public string Name { get; set; }
-            public string Address { get; set; }
-            public string Address2 { get; set; }
-            [Required]
-            public string Zip { get; set; }
-            [Required]
-            public string City { get; set; }
-            [Required]
-            public string Country { get; set; } = "Norge";
+
+            [DataType(DataType.PhoneNumber)]
             public string Phone { get; set; }
+            public StreetAddress ShippingAddress { get; set; }
         }
 
         public enum OrderStatus
@@ -43,6 +41,19 @@ namespace Shoppur.Models
             Paid,
             Cancelled,
             Refunded
+        }
+
+        [Owned]
+        public class StreetAddress
+        {
+            public string Address { get; set; }
+            public string Address2 { get; set; }
+            [Required]
+            public string Zip { get; set; }
+            [Required]
+            public string City { get; set; }
+            [Required]
+            public string Country { get; set; } = "Norge";
         }
 
         public enum ShippingStatus
