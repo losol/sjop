@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Shoppur.Models;
 
 namespace Shoppur.Data
 {
@@ -12,5 +13,6 @@ namespace Shoppur.Data
             : base(options)
         {
         }
+        public DbSet<Shoppur.Models.Product> Product { get; set; }
     }
 }
