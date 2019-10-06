@@ -9,6 +9,6 @@ namespace Shoppur.Models
     {
         public int id { get; set; }
 
-        public ICollection<CartItem>
+        public ICollection<CartItem> CartItems { get; set; }
     }
 }
