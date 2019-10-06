@@ -12,6 +12,8 @@ using Shoppur.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 namespace Shoppur
 {
@@ -55,6 +57,17 @@ namespace Shoppur
 
             app.UseRouting();
 
+            // Set localization settings
+            var defaultCulture = new CultureInfo("nb-NO");
+            var localizationOptions = new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture(defaultCulture),
+                SupportedCultures = new List<CultureInfo> { defaultCulture },
+                SupportedUICultures = new List<CultureInfo> { defaultCulture }
+            };
+            app.UseRequestLocalization(localizationOptions);
+
+            // Auth
             app.UseAuthentication();
             app.UseAuthorization();
 
