@@ -75,6 +75,16 @@ namespace Shoppur
                     policy => policy.RequireRole("Admin"));
             });
 
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.Cookie.Name = ".Kurts.Kake";
+                // 30 minutes session
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             services.AddRazorPages()
                 .AddRazorPagesOptions(options =>
                 {
@@ -116,6 +126,9 @@ namespace Shoppur
             // Auth
             app.UseAuthentication();
             app.UseAuthorization();
+
+            // Use sessions for storing carts
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {
