@@ -8,7 +8,8 @@ namespace Shoppur.Models
 {
     public class Cart
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid CartId { get; set; }
+
         [DataType(DataType.DateTime)]
         public DateTime DateCreated { get; set; } = DateTime.Now;
 

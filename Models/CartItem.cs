@@ -8,11 +8,10 @@ namespace Shoppur.Models
 {
     public class CartItem
     {
-        [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid CartItemId { get; set; } = Guid.NewGuid();
 
         [Required]
-        public int ShoppingCartId { get; set; }
+        public Guid CartId { get; set; }
         [Required]
         public int ProductId { get; set; }
 

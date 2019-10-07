@@ -35,7 +35,7 @@ namespace Shoppur.Controllers
             _logger.LogInformation("*** Cart request ***");
 
             CartVM cart =
-                HttpContext.Session.Get<CartVM>("_CartItems") ??
+                HttpContext.Session.Get<CartVM>("_Cart") ??
                 SaveNewCartToSession();
             
             return cart;
@@ -53,12 +53,17 @@ namespace Shoppur.Controllers
             }
 
             CartVM cart =
-                HttpContext.Session.Get<CartVM>("_CartItems") ??
+                HttpContext.Session.Get<CartVM>("_Cart") ??
                 new CartVM(Guid.NewGuid());
 
-            var newItem = new CartItem() { ProductId = product.ProductId, Quantity = 7, ShoppingCartId = 1 };
+            var newItem = new CartItem() { 
+                ProductId = product.ProductId, 
+                Quantity = 1, 
+                CartId = Guid.Parse(cart.CartId)
+                };
+
             cart.CartItems.Add(newItem);
-            HttpContext.Session.Set<CartVM>("_CartItems", cart);
+            HttpContext.Session.Set<CartVM>("_Cart", cart);
 
             return cart;
         }
@@ -66,7 +71,7 @@ namespace Shoppur.Controllers
         private CartVM SaveNewCartToSession()
         {
             var cart = new CartVM(Guid.NewGuid());   
-            HttpContext.Session.Set<CartVM>("_CartItems", cart);
+            HttpContext.Session.Set<CartVM>("_Cart", cart);
             return cart;
         }
     }

@@ -9,7 +9,7 @@ using Shoppur.Data;
 namespace Shoppur.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191006155802_Init")]
+    [Migration("20191007200700_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
