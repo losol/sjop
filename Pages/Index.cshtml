@@ -5,6 +5,39 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1>Bestill</h1>
+    <ul id="products"></ul>
 </div>
+
+<script>
+
+
+function createNode(element) {
+      return document.createElement(element);
+  }
+
+  function append(parent, el) {
+    return parent.appendChild(el);
+  }
+
+const ul = document.getElementById('products');
+const url = 'api/products'; 
+  fetch(url)
+  .then((resp) => resp.json())
+  .then(function(data) {
+    return data.map(function(product) {
+      let li = createNode('li'),
+          img = createNode('img'),
+          span = createNode('span');
+      img.src = ""; //product.picture.medium;
+      span.innerHTML = `${product.name}`;
+      append(li, img);
+      append(li, span);
+      append(ul, li);
+    })
+  })
+  .catch(function(error) {
+    console.log(error);
+  }); 
+
+</script>
