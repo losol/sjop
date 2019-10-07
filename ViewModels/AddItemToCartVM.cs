@@ -7,8 +7,8 @@ using Shoppur.Models;
 
 namespace Shoppur.ViewModels
 {
-    public class AddProductToCartVM
+    public class AddItemToCartVM
     {
-        public string ProductId { get; set; }
+        public int ProductId { get; set; }
     }
 }

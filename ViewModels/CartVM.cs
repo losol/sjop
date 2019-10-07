@@ -9,13 +9,16 @@ using Shoppur.Models;
 
 namespace Shoppur.ViewModels
 {
-    public class ShoppingCartViewModel
+    public class CartVM
     {
-        public ShoppingCartViewModel()
+        public CartVM(Guid cartId)
         {
+            CartId = cartId.ToString();
             CartItems = new List<CartItem>();
         }
 
+        public string CartId { get; set; }
         public List<CartItem> CartItems { get; set; }
+        
     }
 }

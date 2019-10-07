@@ -30,42 +30,43 @@ namespace Shoppur.Controllers
 
         // GET: api/cart
         [HttpGet]
-        public async Task<ShoppingCartViewModel> GetCart()
+        public async Task<CartVM> GetCart()
         {
             _logger.LogInformation("*** Cart request ***");
-            if (HttpContext.Session.GetString("_CartId") == null)
-            {
-                HttpContext.Session.SetString("_CartId", Guid.NewGuid().ToString());
-            }
 
-            ShoppingCartViewModel cart =
-                HttpContext.Session.Get<ShoppingCartViewModel>("_CartItems") ??
-                new ShoppingCartViewModel();
+            CartVM cart =
+                HttpContext.Session.Get<CartVM>("_CartItems") ??
+                SaveNewCartToSession();
+            
             return cart;
         }
 
         // POST: api/cart/items
         [HttpPost]
         [Route("items")]
-        public async Task<ActionResult<ShoppingCartViewModel>> AddProductToCart([FromBody]AddProductToCartVM product)
+        public async Task<ActionResult<CartVM>> AddProductToCart([FromBody]AddItemToCartVM product)
         {
             _logger.LogInformation("*** Add to cart requested ***");
-            if (product == null) {
+            if (product == null)
+            {
                 return BadRequest();
             }
 
-            
-            ShoppingCartViewModel cart = 
-                HttpContext.Session.Get<ShoppingCartViewModel>("_CartItems") ?? 
-                new ShoppingCartViewModel();
+            CartVM cart =
+                HttpContext.Session.Get<CartVM>("_CartItems") ??
+                new CartVM(Guid.NewGuid());
 
-            var testitem = new CartItem() { ProductId = 1, Quantity = 7, ShoppingCartId = 1 };
-            cart.CartItems.Add(testitem);
-            if (cart.CartItems.Any())
-            {
-                HttpContext.Session.Set<ShoppingCartViewModel>("_CartItems", cart);
-            }
+            var newItem = new CartItem() { ProductId = product.ProductId, Quantity = 7, ShoppingCartId = 1 };
+            cart.CartItems.Add(newItem);
+            HttpContext.Session.Set<CartVM>("_CartItems", cart);
 
+            return cart;
+        }
+
+        private CartVM SaveNewCartToSession()
+        {
+            var cart = new CartVM(Guid.NewGuid());   
+            HttpContext.Session.Set<CartVM>("_CartItems", cart);
             return cart;
         }
     }
