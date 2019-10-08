@@ -11,7 +11,7 @@ using Shoppur.Models;
 
 namespace Shoppur.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
@@ -22,14 +22,14 @@ namespace Shoppur.Controllers
             _context = context;
         }
 
-        // GET: api/Products
+        // GET: api/v1/Products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProduct()
         {
             return await _context.Product.ToListAsync();
         }
 
-        // GET: api/Products/5
+        // GET: api/v1/Products/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
@@ -43,7 +43,7 @@ namespace Shoppur.Controllers
             return product;
         }
 
-        // PUT: api/Products/5
+        // PUT: api/v1/Products/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [Authorize(Policy = "RequireAdministratorRole")]
@@ -76,7 +76,7 @@ namespace Shoppur.Controllers
             return NoContent();
         }
 
-        // POST: api/Products
+        // POST: api/v1/Products
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [Authorize(Policy = "RequireAdministratorRole")]
@@ -89,7 +89,7 @@ namespace Shoppur.Controllers
             return CreatedAtAction("GetProduct", new { id = product.Id }, product);
         }
 
-        // DELETE: api/Products/5
+        // DELETE: api/v1/Products/5
         [Authorize(Policy = "RequireAdministratorRole")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Product>> DeleteProduct(int id)

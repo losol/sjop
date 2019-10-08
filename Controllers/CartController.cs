@@ -15,7 +15,7 @@ using Shoppur.ViewModels;
 
 namespace Shoppur.Controllers
 {
-    [Route("api/cart")]
+    [Route("api/v1/cart")]
     [ApiController]
     public class CartController : ControllerBase
     {
@@ -46,7 +46,7 @@ namespace Shoppur.Controllers
         [Route("items")]
         public async Task<ActionResult<CartVM>> AddProductToCart([FromBody]AddItemToCartVM product)
         {
-            _logger.LogInformation("*** Add to cart requested ***");
+            _logger.LogInformation("*** Add item to cart requested ***");
             if (product == null)
             {
                 return BadRequest();
@@ -67,6 +67,17 @@ namespace Shoppur.Controllers
 
             return cart;
         }
+
+        // POST: api/cart/register-order
+        [HttpPost]
+        [Route("register-order")]
+        public async Task<ActionResult<CartVM>> CreateOrder([FromBody]OrderRegistrationVM orderRegistration)
+        {
+            _logger.LogInformation("*** Submit order from cart ***");
+            
+            throw new NotImplementedException();
+        }
+
 
         private CartVM SaveNewCartToSession()
         {
