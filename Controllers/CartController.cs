@@ -54,7 +54,11 @@ namespace Shoppur.Controllers
 
             CartVM cart =
                 HttpContext.Session.Get<CartVM>("_Cart") ??
-                new CartVM(Guid.NewGuid());
+                new CartVM();
+            
+            if (cart.CartId == null) {
+                cart.CartId = Guid.NewGuid().ToString();
+            }
 
             var newItem = new CartItem() { 
                 ProductId = product.ProductId, 
@@ -81,7 +85,8 @@ namespace Shoppur.Controllers
 
         private CartVM SaveNewCartToSession()
         {
-            var cart = new CartVM(Guid.NewGuid());   
+            var cart = new CartVM();
+            cart.CartId = Guid.NewGuid().ToString();
             HttpContext.Session.Set<CartVM>("_Cart", cart);
             return cart;
         }

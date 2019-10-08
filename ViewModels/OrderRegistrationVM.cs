@@ -13,12 +13,13 @@ namespace Shoppur.ViewModels
     {
         public OrderRegistrationVM()
         {
-            // Initialize here
+            Customer = new CustomerInfo();
+            PaymentProvider = new PaymentProviderType();
+            Cart = new CartVM();
         }
 
-        public string CartId { get; set; }
-
 		public CustomerInfo Customer { get; set;}
+        public PaymentProviderType PaymentProvider { get; set;}
         public CartVM Cart { get; set; }
     }
 }

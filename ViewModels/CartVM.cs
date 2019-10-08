@@ -11,9 +11,8 @@ namespace Shoppur.ViewModels
 {
     public class CartVM
     {
-        public CartVM(Guid cartId)
+        public CartVM()
         {
-            CartId = cartId.ToString();
             CartItems = new List<CartItem>();
         }
 
