@@ -6,8 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Shoppur.Data;
 using Shoppur.Models;
+using Shoppur.ViewModels;
 
 namespace Shoppur.Controllers
 {
@@ -17,10 +19,24 @@ namespace Shoppur.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger _logger;
 
-        public OrdersController(ApplicationDbContext context)
+        public OrdersController(ApplicationDbContext context, ILogger logger)
         {
             _context = context;
+            _logger = logger;
+        }
+
+        // POST: api/orders/register
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("register")]
+        public async Task<ActionResult<CartVM>> CreateOrder([FromBody]OrderRegistrationVM orderRegistration)
+        {
+            _logger.LogInformation("*** Submit order from cart ***");
+            _logger.LogInformation(orderRegistration.ToString());
+            
+            throw new NotImplementedException();
         }
 
         // GET: api/orders

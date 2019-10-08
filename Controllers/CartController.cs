@@ -72,17 +72,6 @@ namespace Shoppur.Controllers
             return cart;
         }
 
-        // POST: api/cart/register-order
-        [HttpPost]
-        [Route("register-order")]
-        public async Task<ActionResult<CartVM>> CreateOrder([FromBody]OrderRegistrationVM orderRegistration)
-        {
-            _logger.LogInformation("*** Submit order from cart ***");
-            
-            throw new NotImplementedException();
-        }
-
-
         private CartVM SaveNewCartToSession()
         {
             var cart = new CartVM();
