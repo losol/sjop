@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Http;
 using Shoppur.Models;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Shoppur
 {
@@ -97,7 +99,9 @@ namespace Shoppur
                 {
                     options.Conventions.AuthorizeFolder("/Admin", "RequireAdministratorRole");
                 });
-            services.AddMvc(option => option.EnableEndpointRouting = false);
+
+            services.AddMvc(option => option.EnableEndpointRouting = false)
+                .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

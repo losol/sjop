@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Shoppur.Data;
 using Shoppur.Models;
 using Shoppur.ViewModels;
+using static Shoppur.Models.Order;
 
 namespace Shoppur.Controllers
 {
@@ -21,7 +24,7 @@ namespace Shoppur.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public OrdersController(ApplicationDbContext context, ILogger logger)
+        public OrdersController(ApplicationDbContext context, ILogger<OrdersController> logger)
         {
             _context = context;
             _logger = logger;
@@ -31,12 +34,43 @@ namespace Shoppur.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("register")]
-        public async Task<ActionResult<CartVM>> CreateOrder([FromBody]OrderRegistrationVM orderRegistration)
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<Order>> RegisterOrder([FromBody]OrderRegistrationVM orderRegistration)
         {
             _logger.LogInformation("*** Submit order from cart ***");
-            _logger.LogInformation(orderRegistration.ToString());
             
-            throw new NotImplementedException();
+            var customer = new CustomerInfo {
+                Name = "asdf",
+                Email = "asdf@asdf.com"
+            };
+
+            var paymentprovider = PaymentProviderType.Stripe;
+
+            var order = new Order { 
+                Customer = customer, 
+                PaymentProvider = paymentprovider, 
+                Status = OrderStatus.Draft,
+                Shipping = ShippingStatus.Draft
+            };
+
+            await _context.Order.AddAsync(order);
+            await _context.SaveChangesAsync();
+
+            _logger.LogCritical("OrderId: " +order.Id);
+                      
+            foreach (var item in orderRegistration.Cart.CartItems) {
+                var line = new OrderLine {
+                    OrderId = order.Id,
+                    ProductId = item.ProductId,
+                    Quantity = 1
+                };
+                await _context.OrderLine.AddAsync(line);
+            }
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
         }
 
         // GET: api/orders
