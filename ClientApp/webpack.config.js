@@ -5,19 +5,19 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
     entry: './app.js',
     output: {
-        filename: 'site.js',
+        filename: 'app.js',
         path: path.resolve(__dirname, '../wwwroot/assets/js')
     },
     plugins: [
-        new MiniCssExtractPlugin({
-            filename: '../css/[name].css',
-            chunkFilename: '../css/[id].css',
-            ignoreOrder: false, // Enable to remove warnings about conflicting order
-        }),
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery',
             'window.jQuery': 'jquery',
+        }),
+        new MiniCssExtractPlugin({
+            filename: '../css/[name].css',
+            chunkFilename: '../css/[id].css',
+            ignoreOrder: false, // Enable to remove warnings about conflicting order
         }),
     ],
     module: {

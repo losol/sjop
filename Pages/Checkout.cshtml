@@ -132,22 +132,21 @@ const serialize_form = form => JSON.stringify(
   Array.from(new FormData(form).entries())
        .reduce((m, [ key, value ]) => Object.assign(m, { [key]: value }), {})
 );
- 
-$(document).ready(function(){
-    jQuery('#order_form').on('submit', function(event) {
-    event.preventDefault();
-    const json = serialize_form(this);
-    console.log(json);
-    /*$.ajax({
-        type: 'POST',
-        url: 'https://url.com/users/register',
-        dataType: 'json',
-        data: json,
-        contentType: 'application/json',
-        success: function(data) {
-        alert(data)
-        }
-    });*/
-    });
+</script>
+<script>
+jQuery('#order_form').on('submit', function(event) {
+event.preventDefault();
+const json = serialize_form(this);
+console.log(json);
+/*$.ajax({
+    type: 'POST',
+    url: 'https://url.com/users/register',
+    dataType: 'json',
+    data: json,
+    contentType: 'application/json',
+    success: function(data) {
+    alert(data)
+    }
+});*/
 });
 </script>
