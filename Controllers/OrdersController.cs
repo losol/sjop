@@ -12,53 +12,50 @@ using Shoppur.Models;
 namespace Shoppur.Controllers
 {
     [Authorize(Policy = "RequireAdministratorRole")]
-    [Route("api/v1/products")]
+    [Route("api/v1/orders")]
     [ApiController]
-    public class ProductsController : ControllerBase
+    public class OrdersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        public ProductsController(ApplicationDbContext context)
+        public OrdersController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/v1/products
-        [AllowAnonymous]
+        // GET: api/orders
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProduct()
+        public async Task<ActionResult<IEnumerable<Order>>> GetOrder()
         {
-            return await _context.Product.ToListAsync();
+            return await _context.Order.ToListAsync();
         }
 
-        // GET: api/v1/Products/5
-        [AllowAnonymous]
+        // GET: api/Orders/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<Order>> GetOrder(int id)
         {
-            var product = await _context.Product.FindAsync(id);
+            var order = await _context.Order.FindAsync(id);
 
-            if (product == null)
+            if (order == null)
             {
                 return NotFound();
             }
 
-            return product;
+            return order;
         }
 
-        // PUT: api/v1/Products/5
+        // PUT: api/orders/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        public async Task<IActionResult> PutOrder(int id, Order order)
         {
-            if (id != product.Id)
+            if (id != order.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(product).State = EntityState.Modified;
+            _context.Entry(order).State = EntityState.Modified;
 
             try
             {
@@ -66,7 +63,7 @@ namespace Shoppur.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProductExists(id))
+                if (!OrderExists(id))
                 {
                     return NotFound();
                 }
@@ -79,39 +76,37 @@ namespace Shoppur.Controllers
             return NoContent();
         }
 
-        // POST: api/v1/Products
+        // POST: api/orders
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        [Authorize(Policy = "RequireAdministratorRole")]
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
+        public async Task<ActionResult<Order>> PostOrder(Order order)
         {
-            _context.Product.Add(product);
+            _context.Order.Add(order);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProduct", new { id = product.Id }, product);
+            return CreatedAtAction("GetOrder", new { id = order.Id }, order);
         }
 
-        // DELETE: api/v1/Products/5
-        [Authorize(Policy = "RequireAdministratorRole")]
+        // DELETE: api/Orders/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Product>> DeleteProduct(int id)
+        public async Task<ActionResult<Order>> DeleteOrder(int id)
         {
-            var product = await _context.Product.FindAsync(id);
-            if (product == null)
+            var order = await _context.Order.FindAsync(id);
+            if (order == null)
             {
                 return NotFound();
             }
 
-            _context.Product.Remove(product);
+            _context.Order.Remove(order);
             await _context.SaveChangesAsync();
 
-            return product;
+            return order;
         }
 
-        private bool ProductExists(int id)
+        private bool OrderExists(int id)
         {
-            return _context.Product.Any(e => e.Id == id);
+            return _context.Order.Any(e => e.Id == id);
         }
     }
 }
