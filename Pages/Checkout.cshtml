@@ -4,149 +4,138 @@
     ViewData["Title"] = "Send bestilling";
 }
 
-      <div class="py-5 text-center">
-        <img class="d-block mx-auto mb-4" src="~/assets/images/kommunevapen-small.png" alt="" width="72" height="72">
-        <h2>Bestilling</h2>
-        <p class="lead">Kurt pakker og sender så snart du har fylt ut og sendt inn.</p>
-      </div>
+<div class="py-5 text-center">
+  <img class="d-block mx-auto mb-4" src="~/assets/images/kommunevapen-small.png" alt="" width="72" height="72">
+  <h2>Bestilling</h2>
+  <p class="lead">Kurt pakker og sender så snart du har fylt ut og sendt inn.</p>
+</div>
 
-      <div class="row">
-        <div class="col-md-4 order-md-2 mb-4">
-          <h4 class="d-flex justify-content-between align-items-center mb-3">
-            <span class="text-muted">Dine varer</span>
-            <span class="badge badge-secondary badge-pill">3</span>
-          </h4>
-          <ul class="list-group mb-3">
-            <li class="list-group-item d-flex justify-content-between lh-condensed">
-              <div>
-                <h6 class="my-0">Kalender 2019</h6>
-                <small class="text-muted">Fra Losvik kommune.</small>
-              </div>
-              <span class="text-muted">kr 249</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between lh-condensed">
-              <div>
-                <h6 class="my-0">Frakt</h6>
-              </div>
-              <span class="text-muted">kr 39</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between">
-              <span>Totalt</span>
-              <strong>kr 288</strong>
-            </li>
-          </ul>
+<div class="row">
+  <div class="col-md-4 order-md-2 mb-4">
+    <h4 class="d-flex justify-content-between align-items-center mb-3">
+      <span class="text-muted">Dine varer</span>
+      <span class="badge badge-secondary badge-pill">3</span>
+    </h4>
+    <ul class="list-group mb-3">
+      <li class="list-group-item d-flex justify-content-between lh-condensed">
+        <div>
+          <h6 class="my-0">Kalender 2019</h6>
+          <small class="text-muted">Fra Losvik kommune.</small>
         </div>
-        <div class="col-md-8 order-md-1">
-          <h4 class="mb-3">Navn og adresse</h4>
-            <form class="needs-validation" id="order_form" novalidate>
-                <div class="mb-3">
-                <label for="name">Navn</label>
-                <input type="text" class="form-control" id="name" placeholder="Kurt Teknisk" required>
-                <div class="invalid-feedback">
-                    Du m&aring; oppgi navn.
-                </div>
-                </div>
-
-                <div class="mb-3">
-                <label for="email">E-post </label>
-                <input type="email" class="form-control" id="email" placeholder="kurt@losvikkommune.no" required>
-                <div class="invalid-feedback">
-                    Vi m&aring; ha eposten din.
-                </div>
-                </div>
-
-                <div class="mb-3">
-                <label for="address">Adresse</label>
-                <input type="text" class="form-control" id="address" placeholder="Losnesmyra 42">
-                <div class="invalid-feedback">
-                    Oppgi adresse.
-                </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col-md-3 mb-3">
-                        <label for="zip">Postnummer</label>
-                        <input type="text" class="form-control" id="zip" placeholder="1234" required>
-                        <div class="invalid-feedback">
-                        Zip code required.
-                        </div>
-                    </div>
-                    <div class="col-md-9 mb-3">
-                        <label for="city">Poststed</label>
-                        <input type="text" class="form-control" id="city" placeholder="Losvika" required>
-                        <div class="invalid-feedback">
-                        Fyll ut poststed.
-                        </div>
-                    </div>
-                </div>
-                <div class="mb-3">
-                <label for="country">Land</label>
-                <input type="text" class="form-control" id="country" placeholder="kurt@losvikkommune.no" value="Norge">
-                </div>
-                <hr class="mb-4">
-
-                <h4 class="mb-3">Betaling</h4>
-
-                <div class="d-block my-3">
-                <div class="custom-control custom-radio">
-                    <input id="card" name="paymentMethod" type="radio" class="custom-control-input" checked>
-                    <label class="custom-control-label" for="card">Betal med kort</label>
-                </div>
-                <div class="custom-control custom-radio">
-                    <input id="vipps" name="paymentMethod" type="radio" class="custom-control-input">
-                    <label class="custom-control-label" for="vipps">Betal med Vipps</label>
-                </div>
-                </div>
-                <hr class="mb-4">
-                <button class="btn btn-primary btn-lg btn-block" type="submit">Betal</button>
-          </form>
+        <span class="text-muted">kr 249</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between lh-condensed">
+        <div>
+          <h6 class="my-0">Frakt</h6>
         </div>
-      </div>
+        <span class="text-muted">kr 39</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between">
+        <span>Totalt</span>
+        <strong>kr 288</strong>
+      </li>
+    </ul>
+  </div>
+  <div class="col-md-8 order-md-1">
+    <h4 class="mb-3">Navn og adresse</h4>
+      <form class="needs-validation" id="order-form" novalidate>
+          <div class="mb-3">
+          <label for="name">Navn</label>
+          <input type="text" class="form-control" id="name" name="name" placeholder="Kurt Teknisk" required>
+          <div class="invalid-feedback">
+              Du m&aring; oppgi navn.
+          </div>
+          </div>
 
-    </div>
+          <div class="mb-3">
+          <label for="email">E-post </label>
+          <input type="email" class="form-control" id="email" name="email" placeholder="kurt@losvikkommune.no" required>
+          <div class="invalid-feedback">
+              Vi m&aring; ha eposten din.
+          </div>
+          </div>
 
-<script>
-// Example starter JavaScript for disabling form submissions if there are invalid fields
-(function() {
-'use strict';
+          <div class="mb-3">
+          <label for="address">Adresse</label>
+          <input type="text" class="form-control" id="address" name="address" placeholder="Losnesmyra 42">
+          <div class="invalid-feedback">
+              Oppgi adresse.
+          </div>
+          </div>
 
-window.addEventListener('load', function() {
-    // Fetch all the forms we want to apply custom Bootstrap validation styles to
-    var forms = document.getElementsByClassName('needs-validation');
 
-    // Loop over them and prevent submission
-    var validation = Array.prototype.filter.call(forms, function(form) {
-    form.addEventListener('submit', function(event) {
-        if (form.checkValidity() === false) {
-        event.preventDefault();
-        event.stopPropagation();
+          <div class="row">
+              <div class="col-md-3 mb-3">
+                  <label for="zip">Postnummer</label>
+                  <input type="text" class="form-control" id="zip" name="zip" placeholder="8000" required>
+                  <div class="invalid-feedback">
+                  Zip code required.
+                  </div>
+              </div>
+              <div class="col-md-9 mb-3">
+                  <label for="city">Poststed</label>
+                  <input type="text" class="form-control" id="city" name="city" placeholder="Losvika" required>
+                  <div class="invalid-feedback">
+                  Fyll ut poststed.
+                  </div>
+              </div>
+          </div>
+          <div class="mb-3">
+          <label for="country">Land</label>
+          <input type="text" class="form-control" id="country" name="country" placeholder="kurt@losvikkommune.no" value="Norge">
+          </div>
+          <hr class="mb-4">
+
+          <h4 class="mb-3">Betaling</h4>
+
+          <div class="d-block my-3">
+          <div class="custom-control custom-radio">
+              <input id="card" name="card" type="radio" class="custom-control-input" checked>
+              <label class="custom-control-label" for="card">Betal med kort</label>
+          </div>
+          <div class="custom-control custom-radio">
+              <input id="vipps" name="vipps" type="radio" class="custom-control-input">
+              <label class="custom-control-label" for="vipps">Betal med Vipps</label>
+          </div>
+          </div>
+          <hr class="mb-4">
+          <button class="btn btn-primary btn-lg btn-block" type="submit">Betal</button>
+    </form>
+  </div>
+</div>
+
+@section Scripts {
+  <script>
+    (function() {
+      function toJSONString(form) {
+        var obj = {};
+        var elements = form.querySelectorAll("input, select, textarea");
+        for (var i = 0; i < elements.length; ++i) {
+          var element = elements[i];
+          var name = element.name;
+          var value = element.value;
+
+          if (name) {
+            obj[name] = value;
+          }
         }
-        form.classList.add('was-validated');
-    }, false);
-    });
-}, false);
-})();
 
-const serialize_form = form => JSON.stringify(
-  Array.from(new FormData(form).entries())
-       .reduce((m, [ key, value ]) => Object.assign(m, { [key]: value }), {})
-);
-</script>
-<script>
-jQuery('#order_form').on('submit', function(event) {
-event.preventDefault();
-const json = serialize_form(this);
-console.log(json);
-/*$.ajax({
-    type: 'POST',
-    url: 'https://url.com/users/register',
-    dataType: 'json',
-    data: json,
-    contentType: 'application/json',
-    success: function(data) {
-    alert(data)
-    }
-});*/
-});
-</script>
+        return JSON.stringify(obj);
+      }
+
+      document.addEventListener("DOMContentLoaded", function() {
+        var form = document.getElementById("order-form");
+        // var output = document.getElementById("output");
+        form.addEventListener(
+          "submit",
+          function(e) {
+            e.preventDefault();
+            var json = toJSONString(this);
+            console.log( json );
+          },
+          false
+        );
+      });
+    })();
+  </script>
+}
