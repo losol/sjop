@@ -11,6 +11,8 @@ using Shoppur.Data;
 using Shoppur.Models;
 using Shoppur.Utilities;
 using Shoppur.ViewModels;
+using static Shoppur.Models.Order;
+using static Shoppur.ViewModels.CartVM;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -78,6 +80,42 @@ namespace Shoppur.Controllers
                 cart.ShippingCost.VatPercent = 25;
                 cart.ShippingCost.TotalShippingCost = 49;
             }}
+
+            // Save Cart to session
+            HttpContext.Session.Set<CartVM>("_Cart", cart);
+
+            return cart;
+        }
+
+        // POST: api/cart/customer
+        [HttpPost]
+        [Route("customer")]
+        public async Task<ActionResult<CartVM>> AddProductToCart([FromBody]CartCustomerInfo customer)
+        {
+            _logger.LogInformation("*** Add customer to cart ***");
+            if (customer == null)
+            {
+                return BadRequest();
+            }
+
+            CartVM cart =
+                HttpContext.Session.Get<CartVM>("_Cart") ??
+                new CartVM();
+            
+            if (cart.CartId == null) {
+                cart.CartId = Guid.NewGuid().ToString();
+            }
+
+            var cartCustomer = new CartCustomerInfo() { 
+                Name = customer.Name,
+                Email = customer.Email,
+                Address = customer.Address,
+                Zip = customer.Zip,
+                City = customer.City,
+                Country = customer.Country
+                };
+
+            cart.Customer = cartCustomer;
 
             // Save Cart to session
             HttpContext.Session.Set<CartVM>("_Cart", cart);

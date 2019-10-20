@@ -19,12 +19,22 @@ namespace Shoppur.ViewModels
         }
 
         public string CartId { get; set; }
-        public CustomerInfo Customer { get;set; }
+        public CartCustomerInfo Customer { get;set; }
         public PaymentProviderType PaymentProvider {get;set;} = PaymentProviderType.Stripe;
         public ShippingDetails ShippingCost {get;set;}
         public decimal CartTotal => CartItems.Sum(o=> o.Product.TotalPrice) + ShippingCost.TotalShippingCost;
         
         public List<CartItem> CartItems { get; set; }
+
+
+        public class CartCustomerInfo {
+            public string Name {get;set;}
+            public string Email {get;set;}
+            public string Address {get;set;}
+            public string Zip {get;set;}
+            public string City {get;set;}
+            public string Country {get;set;}
+        }
 
         public class ShippingDetails {
             public decimal ShippingCost {get;set;}

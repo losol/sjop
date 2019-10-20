@@ -150,10 +150,6 @@
       }); 
 
 
-
-
-
-
     // Example starter JavaScript for disabling form submissions if there are invalid fields
     (function() {
       'use strict';
@@ -188,7 +184,6 @@
             obj[name] = value;
           }
         }
-
         return JSON.stringify(obj);
       }
 
@@ -199,8 +194,25 @@
           "submit",
           function(e) {
             e.preventDefault();
-            var json = toJSONString(this);
-            console.log( json );
+            var formjson = toJSONString(this);
+            const updateCustomerUrl = 'api/v1/cart/customer'; 
+            console.log(formjson);
+            fetch(updateCustomerUrl, {
+                method: 'post',
+                headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+                body: formjson
+                })
+            .then((response) => console.log(response.json))
+            .then((data) => console.log(data))
+            .catch(function(error) {
+                console.log(error);
+            }); 
+
+
+
           },
           false
         );
