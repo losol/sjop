@@ -118,12 +118,15 @@
       fetch(url)
       .then((resp) => resp.json())
       .then(function(data) {
-        return data.map(function(cartitem) {
+        console.log(data);
+        console.log("***");
+        console.log(data.cartItems);
+        return data.cartItems.map(function(cartItem) {
           let li = createNode('li'),
               img = createNode('img'),
               span = createNode('span');
           img.src = ""; //product.picture.medium;
-          span.innerHTML = `${product.name}`;
+          span.innerHTML = `${cartItem.productId}`;
           append(li, img);
           append(li, span);
           append(ul, li);

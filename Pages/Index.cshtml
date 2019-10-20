@@ -7,11 +7,43 @@
 <div class="text-center">
     <h1>Bestill</h1>
     <ul id="products"></ul>
+
+    <button id="order-button" type="button" class="btn btn-success">Success</button>
 </div>
 
 
 @section Scripts {
 <script>
+
+  document.getElementById('order-button').addEventListener('click', function () {
+    console.log("You finally clicked without jQuery");
+
+  const addToCartUrl = 'api/v1/cart/additem'; 
+  fetch(addToCartUrl, {
+    method: 'post',
+    body: JSON.stringify('ProductId=1')
+    })
+    .then((resp) => resp.json())
+    .then(function(data) {
+      return data.map(function(product) {
+        let li = createNode('li'),
+            img = createNode('img'),
+            span = createNode('span');
+        img.src = ""; //product.picture.medium;
+        span.innerHTML = `${product.name}`;
+        append(li, img);
+        append(li, span);
+        append(ul, li);
+      })
+    })
+    .catch(function(error) {
+      console.log(error);
+    }); 
+  });
+
+
+
+
   function createNode(element) {
         return document.createElement(element);
     }
@@ -22,7 +54,7 @@
 
   const ul = document.getElementById('products');
   const url = 'api/v1/products'; 
-    fetch(url)
+  fetch(url)
     .then((resp) => resp.json())
     .then(function(data) {
       return data.map(function(product) {
