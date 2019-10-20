@@ -61,10 +61,13 @@ namespace Shoppur.Controllers
                 cart.CartId = Guid.NewGuid().ToString();
             }
 
+            var dbproduct = await _context.Product.Where(o => o.Id == product.ProductId).FirstOrDefaultAsync();
+
             var newItem = new CartItem() { 
                 ProductId = product.ProductId, 
                 Quantity = 1, 
-                CartId = Guid.Parse(cart.CartId)
+                CartId = Guid.Parse(cart.CartId),
+                Product = dbproduct
                 };
 
             cart.CartItems.Add(newItem);

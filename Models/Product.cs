@@ -12,5 +12,6 @@ namespace Shoppur.Models
         public string Description { get; set; }
         public decimal Price { get; set; }
         public decimal VatPercent { get; set; } = 25;
+        public decimal TotalPrice => (Price + Price * (VatPercent * 0.01m));
     }
 }

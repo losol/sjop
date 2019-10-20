@@ -11,23 +11,6 @@
 </div>
 
 <ul class="list-group mb-3" id="cart-list">
-  <li class="list-group-item d-flex justify-content-between lh-condensed">
-    <div>
-      <h6 class="my-0">Kalender 2019</h6>
-      <small class="text-muted">Fra Losvik kommune.</small>
-    </div>
-    <span class="text-muted">kr 249</span>
-  </li>
-  <li class="list-group-item d-flex justify-content-between lh-condensed">
-    <div>
-      <h6 class="my-0">Frakt</h6>
-    </div>
-    <span class="text-muted">kr 39</span>
-  </li>
-  <li class="list-group-item d-flex justify-content-between">
-    <span>Totalt</span>
-    <strong>kr 288</strong>
-  </li>
 </ul>
 
 <div class="row">
@@ -114,17 +97,54 @@
       .then((resp) => resp.json())
       .then(function(data) {
         console.log(data);
-        console.log("***");
-        console.log(data.cartItems);
-        return data.cartItems.map(function(cartItem) {
+        data.cartItems.map(function(cartItem) {
           let li = createNode('li'),
-              span = createNode('span');
-          span.innerHTML = `${cartItem.productId}`;
+              productNameSpan = createNode('span')
+              priceSpan = createNode('span');
+
           li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'lh-condensed');
-          append(li, span);
+
+          // Product name
+          productNameSpan.innerHTML = `${cartItem.product.name}`;
+          append(li, productNameSpan);
+
+          // Price
+          priceSpan.innerHTML = `kr ${cartItem.product.totalPrice.toFixed(2)}`;
+          append(li, priceSpan);
+
           append(ul, li);
+          });
+
+        // Add shipping
+        let shippingLi = createNode('li'),
+            shippingText = createNode('span'),
+            shippingCost = createNode('span');
+        
+        shippingLi.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'lh-condensed');
+        shippingText.innerHTML = `Frakt`;
+        shippingCost.innerHTML = `kr ${data.shippingCost.totalShippingCost}`;
+        
+        append(shippingLi, shippingText);
+        append(shippingLi, shippingCost);
+        append(ul, shippingLi);
+
+        // Add total
+        let totalLi = createNode('li'),
+            totalText = createNode('span'),
+            totalCost = createNode('span');
+        
+        totalLi.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'lh-condensed', 'font-weight-bold');
+        totalText.innerHTML = `Totalt`;
+        totalCost.innerHTML = `kr ${data.cartTotal.toFixed(2)}`;
+        
+        append(totalLi, totalText);
+        append(totalLi, totalCost);
+        append(ul, totalLi);
+      
         })
-      })
+      
+
+
       .catch(function(error) {
         console.log(error);
       }); 
