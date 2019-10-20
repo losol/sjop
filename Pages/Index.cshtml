@@ -5,19 +5,16 @@
 }
 
 <div class="text-center">
-    <h1>Bestill</h1>
-    <ul id="products"></ul>
-
-    <button id="order-button" type="button" class="btn btn-success">Success</button>
+    <h1 class="display-none">Losvik kommunes nettsjappe</h1>
+    <ul id="products" class="list-unstyled"></ul>
 </div>
-
 
 @section Scripts {
 <script>
 
-  document.getElementById('order-button').addEventListener('click', function () {
+  function CheckoutProduct(id) {
     const addToCartUrl = 'api/v1/cart/additem'; 
-    var body = { ProductId : 1 };
+    var body = { ProductId : id };
     console.log(JSON.stringify(body));
     fetch(addToCartUrl, {
         method: 'post',
@@ -31,8 +28,7 @@
       .catch(function(error) {
         console.log(error);
       }); 
-  });
-
+  }
 
   function createNode(element) {
         return document.createElement(element);
@@ -51,10 +47,24 @@
         let li = createNode('li'),
             img = createNode('img'),
             span = createNode('span');
+            button = createNode('button');
+            // '<button id="order-button" type="button" class="btn btn-success">Success</button>';
         img.src = ""; //product.picture.medium;
         span.innerHTML = `${product.name}`;
+        
         append(li, img);
         append(li, span);
+
+        // Button
+        button.setAttribute("data-id", product.id);
+        button.setAttribute('type', 'button');
+        button.innerHTML = 'Kj&oslash;p';
+        button.className = 'btn btn-info';
+        button.addEventListener("click", function () {
+          CheckoutProduct(product.id);
+        });
+        append(li, button);
+
         append(ul, li);
       })
     })
