@@ -76,6 +76,9 @@ namespace Shoppur.Controllers
                 cart.ShippingCost.TotalShippingCost = 49;
             }}
 
+            // Save Cart to session
+            HttpContext.Session.Set<CartVM>("_Cart", cart);
+
             return cart;
         }
 

@@ -9,35 +9,35 @@
     <ul id="products"></ul>
 </div>
 
+
+@section Scripts {
 <script>
+  function createNode(element) {
+        return document.createElement(element);
+    }
 
+    function append(parent, el) {
+      return parent.appendChild(el);
+    }
 
-function createNode(element) {
-      return document.createElement(element);
-  }
-
-  function append(parent, el) {
-    return parent.appendChild(el);
-  }
-
-const ul = document.getElementById('products');
-const url = 'api/v1/products'; 
-  fetch(url)
-  .then((resp) => resp.json())
-  .then(function(data) {
-    return data.map(function(product) {
-      let li = createNode('li'),
-          img = createNode('img'),
-          span = createNode('span');
-      img.src = ""; //product.picture.medium;
-      span.innerHTML = `${product.name}`;
-      append(li, img);
-      append(li, span);
-      append(ul, li);
+  const ul = document.getElementById('products');
+  const url = 'api/v1/products'; 
+    fetch(url)
+    .then((resp) => resp.json())
+    .then(function(data) {
+      return data.map(function(product) {
+        let li = createNode('li'),
+            img = createNode('img'),
+            span = createNode('span');
+        img.src = ""; //product.picture.medium;
+        span.innerHTML = `${product.name}`;
+        append(li, img);
+        append(li, span);
+        append(ul, li);
+      })
     })
-  })
-  .catch(function(error) {
-    console.log(error);
-  }); 
-
+    .catch(function(error) {
+      console.log(error);
+    }); 
 </script>
+}
