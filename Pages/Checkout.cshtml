@@ -195,7 +195,8 @@
           function(e) {
             e.preventDefault();
             var formjson = toJSONString(this);
-            const updateCustomerUrl = 'api/v1/cart/customer'; 
+            const updateCustomerUrl = 'api/v1/cart/customer';
+            const submitOrderUrl = 'api/v1/cart/submit-order';  
             console.log(formjson);
             fetch(updateCustomerUrl, {
                 method: 'post',
@@ -205,8 +206,14 @@
                 },
                 body: formjson
                 })
-            .then((response) => console.log(response.json))
-            .then((data) => console.log(data))
+            .then(response => response.json())
+            .then(function(json) {
+              console.log(json);
+              return fetch(submitOrderUrl, {
+                method: 'post'
+                }
+              );
+            })
             .catch(function(error) {
                 console.log(error);
             }); 

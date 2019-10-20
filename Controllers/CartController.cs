@@ -90,7 +90,7 @@ namespace Shoppur.Controllers
         // POST: api/cart/customer
         [HttpPost]
         [Route("customer")]
-        public async Task<ActionResult<CartVM>> AddProductToCart([FromBody]CartCustomerInfo customer)
+        public async Task<ActionResult<CartVM>> UpdateCustomer([FromBody]CartCustomerInfo customer)
         {
             _logger.LogInformation("*** Add customer to cart ***");
             if (customer == null)
@@ -119,6 +119,17 @@ namespace Shoppur.Controllers
 
             // Save Cart to session
             HttpContext.Session.Set<CartVM>("_Cart", cart);
+
+            return cart;
+        }
+
+        // POST: api/cart/submit-order
+        [HttpPost]
+        [Route("submit-order")]
+        public async Task<ActionResult<CartVM>> SubmitOrder()
+        {
+            _logger.LogInformation("*** Submitting cart as order ***");
+            var cart = HttpContext.Session.Get<CartVM>("_Cart");
 
             return cart;
         }
