@@ -68,7 +68,13 @@ namespace Shoppur.Controllers
                 };
 
             cart.CartItems.Add(newItem);
-            HttpContext.Session.Set<CartVM>("_Cart", cart);
+
+            // TODO do this in a proper way
+            if (cart.ShippingCost.TotalShippingCost == 0) {{
+                cart.ShippingCost.ShippingCost = 39.2M;
+                cart.ShippingCost.VatPercent = 25;
+                cart.ShippingCost.TotalShippingCost = 49;
+            }}
 
             return cart;
         }

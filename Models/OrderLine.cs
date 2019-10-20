@@ -16,6 +16,7 @@ namespace Shoppur.Models
 
         [Required, ForeignKey("Product")]
         public int? ProductId { get; set; }
+        public OrderLineType LineType { get; set;} = OrderLineType.Product;
         public int Quantity { get; set; } = 1;
 
         public string ProductName { get; set; }
@@ -34,6 +35,11 @@ namespace Shoppur.Models
         [InverseProperty("OrderLines")]
         public Order Order { get; set; }
         public Product Product { get; set; }
+
+        public enum OrderLineType {
+            Product,
+            Shipping
+        }
 
     }
 }

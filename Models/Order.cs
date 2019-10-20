@@ -15,6 +15,8 @@ namespace Shoppur.Models
         public PaymentProviderType PaymentProvider { get; set; }
         public OrderStatus Status { get; set; }
         public ShippingStatus Shipping { get; set; }
+        public ShippingType ShippingMethod {get;set;}
+
         public string Log { get; set; }
 
         // Navigational properties
@@ -61,6 +63,13 @@ namespace Shoppur.Models
             Draft,
             Planned,
             Shipped
+        }
+
+        public enum ShippingType
+        {
+            None,
+            Mail,
+            Digital
         }
 
         public enum PaymentProviderType
