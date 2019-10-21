@@ -161,6 +161,15 @@ namespace Shoppur.Controllers
                 };
                 newOrder.OrderLines.Add(line);
             }
+
+            // Add shipping
+            var shippingline = new OrderLine() {
+                ProductName = "Frakt", 
+                OrderId = newOrder.Id,
+                Price = cart.ShippingCost.ShippingCost
+            };
+            newOrder.OrderLines.Add(shippingline);
+
             _context.Order.Update(newOrder);
             await _context.SaveChangesAsync();
 

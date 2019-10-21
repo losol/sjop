@@ -46,7 +46,7 @@ namespace Shoppur.Controllers {
             var newline = new SessionLineItemOptions {
                 Name = ol.ProductName,
                 Description = ol.ProductDescription,
-                Amount = Convert.ToInt64(ol.Price * 100),
+                Amount = Convert.ToInt64(ol.TotalPrice * 100),
                 Currency = "nok",
                 Quantity = ol.Quantity
             };

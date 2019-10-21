@@ -24,9 +24,8 @@ namespace Shoppur.Models
 
         [DataType(DataType.Currency)]
         public decimal Price { get; set; }
-
         public decimal VatPercent { get; set; } = 25;
-
+        public decimal TotalPrice => (Price + Price * (VatPercent * 0.01m));
         public decimal LineTotal => (Price + Price * (VatPercent * 0.01m)) * Quantity;
 
         public string Comments { get; set; }
