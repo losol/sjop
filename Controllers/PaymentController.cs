@@ -35,7 +35,7 @@ namespace Shoppur.Controllers {
 			var service = new ChargeService();
 			Charge charge = service.Create(options);
             
-            return Ok("hei");
+            return Ok(charge);
         }
 	}
 }
