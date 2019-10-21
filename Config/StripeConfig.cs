@@ -1,7 +1,8 @@
 namespace Shoppur.Config {
 
 	public class StripeSettings {
-		public string ApiKey {get;set;}
+		public string SecretKey {get;set;}
+		public string PublishableKey {get;set;}
 	}
 
 }
