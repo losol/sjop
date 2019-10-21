@@ -19,12 +19,14 @@ namespace Shoppur.Controllers {
 		private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 		private readonly StripeSettings _stripeSettings;
+        private readonly SiteSettings _siteSettings;
 
-		public PaymentController(ApplicationDbContext context, ILogger<CartController> logger, StripeSettings stripeSettings)
+		public PaymentController(ApplicationDbContext context, ILogger<CartController> logger, StripeSettings stripeSettings, SiteSettings siteSetttings)
         {
             _context = context;
             _logger = logger;
 			_stripeSettings = stripeSettings;
+            _siteSettings = siteSetttings;
         }
 
 		[HttpPost]
@@ -55,8 +57,8 @@ namespace Shoppur.Controllers {
 				"card",
 			},
 			LineItems = lines,
-			SuccessUrl = "https://example.com/success?session_id={CHECKOUT_SESSION_ID}",
-			CancelUrl = "https://example.com/cancel",
+			SuccessUrl = _siteSettings.BaseUrl + "/PaymentSuccess?session_id={CHECKOUT_SESSION_ID}",
+			CancelUrl = _siteSettings.BaseUrl + "/PaymentFailed",
 		};
 
 		var service = new SessionService();

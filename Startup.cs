@@ -40,6 +40,10 @@ namespace Shoppur
             Configuration.Bind("StripeSettings", stripeSettings);
             services.AddSingleton<StripeSettings>(stripeSettings);
 
+            var siteSettings = new SiteSettings();
+            Configuration.Bind("SiteSettings", siteSettings);
+            services.AddSingleton<SiteSettings>(siteSettings);
+
             // Configure cookie policy
             services.Configure<CookiePolicyOptions>(options =>
             {
