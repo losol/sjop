@@ -19,6 +19,7 @@ using Shoppur.Models;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Shoppur.Config;
 
 namespace Shoppur
 {
@@ -34,6 +35,11 @@ namespace Shoppur
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
+            var stripeSettings = new StripeSettings();
+            Configuration.Bind("StripeSettings", stripeSettings);
+            services.AddSingleton<StripeSettings>(stripeSettings);
+
             // Configure cookie policy
             services.Configure<CookiePolicyOptions>(options =>
             {
