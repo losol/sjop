@@ -21,7 +21,7 @@ namespace Shoppur
 
                 try
                 {
-                    var context = services.GetRequiredService<ApplicationDbContext>();
+                    var context = services.GetService<ApplicationDbContext>();
                     context.Database.Migrate();
 
                     // requires using Microsoft.Extensions.Configuration;
