@@ -9,8 +9,8 @@ using Shoppur.Data;
 namespace Shoppur.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191008153153_Orderline")]
-    partial class Orderline
+    [Migration("20191021211501_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -217,6 +217,31 @@ namespace Shoppur.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("Shoppur.Models.CartItem", b =>
+                {
+                    b.Property<Guid>("CartItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("CartId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("CartItemId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("CartItems");
+                });
+
             modelBuilder.Entity("Shoppur.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -232,12 +257,15 @@ namespace Shoppur.Migrations
                     b.Property<int>("Shipping")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("ShippingMethod")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Order");
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("Shoppur.Models.OrderLine", b =>
@@ -249,6 +277,9 @@ namespace Shoppur.Migrations
                     b.Property<string>("Comments")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("LineType")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("OrderId")
                         .HasColumnType("INTEGER");
 
@@ -259,7 +290,6 @@ namespace Shoppur.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("ProductId")
-                        .IsRequired()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ProductName")
@@ -277,7 +307,7 @@ namespace Shoppur.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderLine");
+                    b.ToTable("OrderLines");
                 });
 
             modelBuilder.Entity("Shoppur.Models.Product", b =>
@@ -300,7 +330,7 @@ namespace Shoppur.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Product");
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -354,6 +384,15 @@ namespace Shoppur.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Shoppur.Models.CartItem", b =>
+                {
+                    b.HasOne("Shoppur.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Shoppur.Models.Order", b =>
                 {
                     b.OwnsOne("Shoppur.Models.Order+CustomerInfo", "Customer", b1 =>
@@ -373,7 +412,7 @@ namespace Shoppur.Migrations
 
                             b1.HasKey("OrderId");
 
-                            b1.ToTable("Order");
+                            b1.ToTable("Orders");
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");
@@ -403,7 +442,7 @@ namespace Shoppur.Migrations
 
                                     b2.HasKey("CustomerInfoOrderId");
 
-                                    b2.ToTable("Order");
+                                    b2.ToTable("Orders");
 
                                     b2.WithOwner()
                                         .HasForeignKey("CustomerInfoOrderId");
@@ -421,9 +460,7 @@ namespace Shoppur.Migrations
 
                     b.HasOne("Shoppur.Models.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductId");
                 });
 #pragma warning restore 612, 618
         }

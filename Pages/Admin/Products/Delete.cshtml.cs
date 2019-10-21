@@ -29,7 +29,7 @@ namespace Shoppur.Pages.Admin.Products
                 return NotFound();
             }
 
-            Product = await _context.Product.FirstOrDefaultAsync(m => m.Id == id);
+            Product = await _context.Products.FirstOrDefaultAsync(m => m.Id == id);
 
             if (Product == null)
             {
@@ -45,11 +45,11 @@ namespace Shoppur.Pages.Admin.Products
                 return NotFound();
             }
 
-            Product = await _context.Product.FindAsync(id);
+            Product = await _context.Products.FindAsync(id);
 
             if (Product != null)
             {
-                _context.Product.Remove(Product);
+                _context.Products.Remove(Product);
                 await _context.SaveChangesAsync();
             }
 

@@ -23,7 +23,7 @@ namespace Shoppur.Pages.Admin.Orders
 
         public async Task OnGetAsync()
         {
-            Order = await _context.Order.ToListAsync();
+            Order = await _context.Orders.ToListAsync();
         }
     }
 }

@@ -30,7 +30,7 @@ namespace Shoppur.Pages.Admin.Orders
                 return NotFound();
             }
 
-            Order = await _context.Order.FirstOrDefaultAsync(m => m.Id == id);
+            Order = await _context.Orders.FirstOrDefaultAsync(m => m.Id == id);
 
             if (Order == null)
             {
@@ -71,7 +71,7 @@ namespace Shoppur.Pages.Admin.Orders
 
         private bool OrderExists(int id)
         {
-            return _context.Order.Any(e => e.Id == id);
+            return _context.Orders.Any(e => e.Id == id);
         }
     }
 }

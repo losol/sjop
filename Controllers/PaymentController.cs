@@ -36,7 +36,7 @@ namespace Shoppur.Controllers {
 
 		_logger.LogInformation($"*** Paying order: {payOrder.OrderId}.");
 
-        var order = _context.Order
+        var order = _context.Orders
             .Where(p => p.Id == payOrder.OrderId)
             .Include(order => order.OrderLines)
             .FirstOrDefault();

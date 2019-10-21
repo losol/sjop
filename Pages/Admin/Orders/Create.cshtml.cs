@@ -36,7 +36,7 @@ namespace Shoppur.Pages.Admin.Orders
                 return Page();
             }
 
-            _context.Order.Add(Order);
+            _context.Orders.Add(Order);
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");

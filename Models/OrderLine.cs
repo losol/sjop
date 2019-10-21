@@ -14,7 +14,7 @@ namespace Shoppur.Models
         [Required, ForeignKey("Order")]
         public int OrderId { get; set; }
 
-        [Required, ForeignKey("Product")]
+        [ForeignKey("Product")]
         public int? ProductId { get; set; }
         public OrderLineType LineType { get; set;} = OrderLineType.Product;
         public int Quantity { get; set; } = 1;

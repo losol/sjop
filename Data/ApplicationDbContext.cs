@@ -13,9 +13,9 @@ namespace Shoppur.Data
             : base(options)
         {
         }
-        public DbSet<Shoppur.Models.Product> Product { get; set; }
-        public DbSet<Shoppur.Models.Order> Order { get; set; }
-        public DbSet<Shoppur.Models.OrderLine> OrderLine { get; set; }
-        public DbSet<Shoppur.Models.CartItem> CartItem { get; set; }
+        public DbSet<Shoppur.Models.Product> Products { get; set; }
+        public DbSet<Shoppur.Models.Order> Orders { get; set; }
+        public DbSet<Shoppur.Models.OrderLine> OrderLines { get; set; }
+        public DbSet<Shoppur.Models.CartItem> CartItems { get; set; }
     }
 }

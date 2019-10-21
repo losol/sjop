@@ -63,7 +63,7 @@ namespace Shoppur.Controllers
                 cart.CartId = Guid.NewGuid().ToString();
             }
 
-            var dbproduct = await _context.Product.Where(o => o.Id == product.ProductId).FirstOrDefaultAsync();
+            var dbproduct = await _context.Products.Where(o => o.Id == product.ProductId).FirstOrDefaultAsync();
 
             var newItem = new CartItem() { 
                 ProductId = product.ProductId, 
@@ -146,11 +146,11 @@ namespace Shoppur.Controllers
                 Customer = newCustomer,
                 PaymentProvider = PaymentProviderType.Stripe
             };
-            await _context.Order.AddAsync(newOrder);
+            await _context.Orders.AddAsync(newOrder);
             await _context.SaveChangesAsync();
 
             foreach (var cartitem in cart.CartItems) {
-                var product = await _context.Product.Where(p => p.Id == cartitem.ProductId).FirstOrDefaultAsync();
+                var product = await _context.Products.Where(p => p.Id == cartitem.ProductId).FirstOrDefaultAsync();
                 var line = new OrderLine() {
                     ProductId = cartitem.ProductId,
                     ProductName = cartitem.Product.Name,
@@ -170,7 +170,7 @@ namespace Shoppur.Controllers
             };
             newOrder.OrderLines.Add(shippingline);
 
-            _context.Order.Update(newOrder);
+            _context.Orders.Update(newOrder);
             await _context.SaveChangesAsync();
 
             _logger.LogInformation($"*** Added order with id: {newOrder.Id} ***");
@@ -182,7 +182,7 @@ namespace Shoppur.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CartItem>> GetCartItem(Guid id)
         {
-            var cartItem = await _context.CartItem.FindAsync(id);
+            var cartItem = await _context.CartItems.FindAsync(id);
 
             if (cartItem == null)
             {
@@ -230,7 +230,7 @@ namespace Shoppur.Controllers
         [HttpPost]
         public async Task<ActionResult<CartItem>> PostCartItem(CartItem cartItem)
         {
-            _context.CartItem.Add(cartItem);
+            _context.CartItems.Add(cartItem);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetCartItem", new { id = cartItem.CartItemId }, cartItem);
@@ -240,13 +240,13 @@ namespace Shoppur.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<CartItem>> DeleteCartItem(Guid id)
         {
-            var cartItem = await _context.CartItem.FindAsync(id);
+            var cartItem = await _context.CartItems.FindAsync(id);
             if (cartItem == null)
             {
                 return NotFound();
             }
 
-            _context.CartItem.Remove(cartItem);
+            _context.CartItems.Remove(cartItem);
             await _context.SaveChangesAsync();
 
             return cartItem;
@@ -254,7 +254,7 @@ namespace Shoppur.Controllers
 
         private bool CartItemExists(Guid id)
         {
-            return _context.CartItem.Any(e => e.CartItemId == id);
+            return _context.CartItems.Any(e => e.CartItemId == id);
         }
 
         private CartVM SaveNewCartToSession()

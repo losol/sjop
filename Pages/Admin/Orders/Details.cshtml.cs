@@ -28,7 +28,7 @@ namespace Shoppur.Pages.Admin.Orders
                 return NotFound();
             }
 
-            Order = await _context.Order.FirstOrDefaultAsync(m => m.Id == id);
+            Order = await _context.Orders.FirstOrDefaultAsync(m => m.Id == id);
 
             if (Order == null)
             {

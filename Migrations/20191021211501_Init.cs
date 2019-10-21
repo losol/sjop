@@ -48,7 +48,7 @@ namespace Shoppur.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Order",
+                name: "Orders",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -64,15 +64,16 @@ namespace Shoppur.Migrations
                     PaymentProvider = table.Column<int>(nullable: false),
                     Status = table.Column<int>(nullable: false),
                     Shipping = table.Column<int>(nullable: false),
+                    ShippingMethod = table.Column<int>(nullable: false),
                     Log = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Order", x => x.Id);
+                    table.PrimaryKey("PK_Orders", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Product",
+                name: "Products",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -84,7 +85,7 @@ namespace Shoppur.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Product", x => x.Id);
+                    table.PrimaryKey("PK_Products", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -194,13 +195,35 @@ namespace Shoppur.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrderLine",
+                name: "CartItems",
+                columns: table => new
+                {
+                    CartItemId = table.Column<Guid>(nullable: false),
+                    CartId = table.Column<Guid>(nullable: false),
+                    ProductId = table.Column<int>(nullable: false),
+                    Quantity = table.Column<int>(nullable: false),
+                    DateCreated = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartItems", x => x.CartItemId);
+                    table.ForeignKey(
+                        name: "FK_CartItems_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderLines",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     OrderId = table.Column<int>(nullable: false),
-                    ProductId = table.Column<int>(nullable: false),
+                    ProductId = table.Column<int>(nullable: true),
+                    LineType = table.Column<int>(nullable: false),
                     Quantity = table.Column<int>(nullable: false),
                     ProductName = table.Column<string>(nullable: true),
                     ProductDescription = table.Column<string>(nullable: true),
@@ -210,19 +233,19 @@ namespace Shoppur.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderLine", x => x.Id);
+                    table.PrimaryKey("PK_OrderLines", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_OrderLine_Order_OrderId",
+                        name: "FK_OrderLines_Orders_OrderId",
                         column: x => x.OrderId,
-                        principalTable: "Order",
+                        principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_OrderLine_Product_ProductId",
+                        name: "FK_OrderLines_Products_ProductId",
                         column: x => x.ProductId,
-                        principalTable: "Product",
+                        principalTable: "Products",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -263,13 +286,18 @@ namespace Shoppur.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderLine_OrderId",
-                table: "OrderLine",
+                name: "IX_CartItems_ProductId",
+                table: "CartItems",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderLines_OrderId",
+                table: "OrderLines",
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderLine_ProductId",
-                table: "OrderLine",
+                name: "IX_OrderLines_ProductId",
+                table: "OrderLines",
                 column: "ProductId");
         }
 
@@ -291,7 +319,10 @@ namespace Shoppur.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "OrderLine");
+                name: "CartItems");
+
+            migrationBuilder.DropTable(
+                name: "OrderLines");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -300,10 +331,10 @@ namespace Shoppur.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Order");
+                name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Product");
+                name: "Products");
         }
     }
 }

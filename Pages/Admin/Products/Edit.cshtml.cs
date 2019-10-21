@@ -30,7 +30,7 @@ namespace Shoppur.Pages.Admin.Products
                 return NotFound();
             }
 
-            Product = await _context.Product.FirstOrDefaultAsync(m => m.Id == id);
+            Product = await _context.Products.FirstOrDefaultAsync(m => m.Id == id);
 
             if (Product == null)
             {
@@ -71,7 +71,7 @@ namespace Shoppur.Pages.Admin.Products
 
         private bool ProductExists(int id)
         {
-            return _context.Product.Any(e => e.Id == id);
+            return _context.Products.Any(e => e.Id == id);
         }
     }
 }
