@@ -199,8 +199,9 @@
             e.preventDefault();
             var formjson = toJSONString(this);
             const updateCustomerUrl = 'api/v1/cart/customer';
-            const submitOrderUrl = 'api/v1/cart/submit-order';  
-            console.log(formjson);
+            const submitOrderUrl = 'api/v1/cart/submit-order'; 
+            const paymentUrl = 'api/v1/payment';
+
             fetch(updateCustomerUrl, {
                 method: 'post',
                 headers: {
@@ -215,18 +216,31 @@
               return fetch(submitOrderUrl, {
                 method: 'post'
                 }
-              );
+              )
+              .then(response => response.json());
             })
-            
 
             .then(
-              stripe.redirectToCheckout({
-                // Make the id field from the Checkout Session creation API response
-                // available to this file, so you can provide it as parameter here
-                // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
-                sessionId: '123'
-              })
+                
+                function(order) {
+                    var orderobject = {"OrderId" : order.id};
+                    return fetch(paymentUrl, {
+                        method: 'post',
+                        headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                        },
+                    body: JSON.stringify(orderobject)
+                    })
+                        .then(response => response.json());
+                    }
             )
+
+            .then(function(payment) {
+                stripe.redirectToCheckout({
+                sessionId: payment.id
+              })
+            })
 
             .catch(function(error) {
                 console.log(error);

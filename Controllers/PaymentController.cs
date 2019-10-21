@@ -1,9 +1,13 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Shoppur.Config;
 using Shoppur.Data;
+using Shoppur.ViewModels;
 using Stripe;
 using Stripe.Checkout;
 
@@ -23,25 +27,34 @@ namespace Shoppur.Controllers {
 			_stripeSettings = stripeSettings;
         }
 
-		[HttpGet]
-        public async Task<ActionResult> Pay()
+		[HttpPost]
+        public async Task<ActionResult> Pay([FromBody]PayOrder payOrder)
         {
             StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
 
-			
+		_logger.LogInformation($"*** Paying order: {payOrder.OrderId}.");
+
+        var order = _context.Order
+            .Where(p => p.Id == payOrder.OrderId)
+            .Include(order => order.OrderLines)
+            .FirstOrDefault();
+
+        var lines = new List<SessionLineItemOptions>();
+        foreach (var ol in order.OrderLines) {
+            var newline = new SessionLineItemOptions {
+                Name = ol.ProductName,
+                Description = ol.ProductDescription,
+                Amount = Convert.ToInt64(ol.Price * 100),
+                Currency = "nok",
+                Quantity = ol.Quantity
+            };
+            lines.Add(newline);
+        }
 		var options = new SessionCreateOptions {
 			PaymentMethodTypes = new List<string> {
 				"card",
 			},
-			LineItems = new List<SessionLineItemOptions> {
-				new SessionLineItemOptions {
-					Name = "T-shirt",
-					Description = "Comfortable cotton t-shirt",
-					Amount = 500,
-					Currency = "nok",
-					Quantity = 1,
-				},
-			},
+			LineItems = lines,
 			SuccessUrl = "https://example.com/success?session_id={CHECKOUT_SESSION_ID}",
 			CancelUrl = "https://example.com/cancel",
 		};
@@ -49,7 +62,7 @@ namespace Shoppur.Controllers {
 		var service = new SessionService();
 		Session session = service.Create(options);
             
-            return Ok(session);
+        return Ok(session); 
         }
 	}
 }

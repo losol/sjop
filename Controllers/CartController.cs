@@ -126,7 +126,7 @@ namespace Shoppur.Controllers
         // POST: api/cart/submit-order
         [HttpPost]
         [Route("submit-order")]
-        public async Task<ActionResult<CartVM>> SubmitOrder()
+        public async Task<ActionResult<Order>> SubmitOrder()
         {
             _logger.LogInformation("*** Submitting cart as order ***");
             var cart = HttpContext.Session.Get<CartVM>("_Cart");
@@ -166,7 +166,7 @@ namespace Shoppur.Controllers
 
             _logger.LogInformation($"*** Added order with id: {newOrder.Id} ***");
 
-            return cart;
+            return newOrder;
         }
 
         // GET: api/cart/item/5
