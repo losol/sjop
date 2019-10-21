@@ -9,13 +9,18 @@ namespace Shoppur.Models
 {
     public class Order
     {
+        public Order() {
+            Customer = new CustomerInfo();
+            PaymentProvider = new PaymentProviderType();
+            OrderLines = new List<OrderLine>();
+        }
         [Required]
         public int Id { get; set; }
         public CustomerInfo Customer { get; set; }
         public PaymentProviderType PaymentProvider { get; set; }
-        public OrderStatus Status { get; set; }
-        public ShippingStatus Shipping { get; set; }
-        public ShippingType ShippingMethod {get;set;}
+        public OrderStatus Status { get; set; } = OrderStatus.Draft;
+        public ShippingStatus Shipping { get; set; } = ShippingStatus.Draft;
+        public ShippingType ShippingMethod {get;set;} = ShippingType.Mail;
 
         public string Log { get; set; }
 

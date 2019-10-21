@@ -131,6 +131,41 @@ namespace Shoppur.Controllers
             _logger.LogInformation("*** Submitting cart as order ***");
             var cart = HttpContext.Session.Get<CartVM>("_Cart");
 
+            var newCustomer = new CustomerInfo() {
+                Name = cart.Customer.Name,
+                Email = cart.Customer.Email,
+                ShippingAddress = new StreetAddress() {
+                    Address = cart.Customer.Address, 
+                    Zip = cart.Customer.Zip, 
+                    City = cart.Customer.City, 
+                    Country = cart.Customer.Country
+                }
+            };
+
+            var newOrder = new Order() {
+                Customer = newCustomer,
+                PaymentProvider = PaymentProviderType.Stripe
+            };
+            await _context.Order.AddAsync(newOrder);
+            await _context.SaveChangesAsync();
+
+            foreach (var cartitem in cart.CartItems) {
+                var product = await _context.Product.Where(p => p.Id == cartitem.ProductId).FirstOrDefaultAsync();
+                var line = new OrderLine() {
+                    ProductId = cartitem.ProductId,
+                    ProductName = cartitem.Product.Name,
+                    OrderId = newOrder.Id,
+                    Quantity = cartitem.Quantity,
+                    Price = product.Price,
+                    VatPercent = product.VatPercent
+                };
+                newOrder.OrderLines.Add(line);
+            }
+            _context.Order.Update(newOrder);
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"*** Added order with id: {newOrder.Id} ***");
+
             return cart;
         }
 
