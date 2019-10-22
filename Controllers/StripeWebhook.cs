@@ -10,7 +10,8 @@ using Stripe.Checkout;
 
 namespace Shoppur.Controllers
 {
-    [Route("webhook/stripe")]
+	[ApiController]
+    [Route("webhooks/stripe")]
     public class StripeWebHookController : ControllerBase
     {
 		private readonly ApplicationDbContext _context;
@@ -29,18 +30,21 @@ namespace Shoppur.Controllers
         {
 			_logger.LogDebug("*** Webhook received ***");
 			var webhookSecret = _stripeSettings.WebhookSecret;
+			StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
+			
             var json = await new StreamReader (HttpContext.Request.Body).ReadToEndAsync(); 
-
+			
             try
             {
+				
                 var stripeEvent = EventUtility.ConstructEvent(json,
-                    Request.Headers["Stripe-Signature"], webhookSecret);
+                    HttpContext.Request.Headers["Stripe-Signature"], webhookSecret);
 
                 // Handle the checkout.session.completed event
                 if (stripeEvent.Type == Events.CheckoutSessionCompleted)
                 {
                     var session = stripeEvent.Data.Object as Stripe.Checkout.Session;
-					_logger.LogCritical("** YEAH MONEY COMING **: " + session.ToString());
+					_logger.LogCritical("** YEAH MONEY COMING **: " + session.ToString()); 
 
 
                     // Fulfill the purchase...
