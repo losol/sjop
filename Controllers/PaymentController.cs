@@ -53,6 +53,8 @@ namespace Shoppur.Controllers {
             lines.Add(newline);
         }
 		var options = new SessionCreateOptions {
+			CustomerEmail = order.Customer.Email,
+			Locale = "nb", 
 			PaymentMethodTypes = new List<string> {
 				"card",
 			},

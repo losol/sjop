@@ -5,7 +5,7 @@
 }
 
 <div class="text-center">
-    <h1 class="display-none">Losvik kommunes nettsjappe</h1>
+    <h1 class="sr-only">Losvik kommunes nettsjappe</h1>
     <ul id="products" class="list-unstyled"></ul>
 </div>
 
@@ -45,16 +45,24 @@
     .then(function(data) {
       return data.map(function(product) {
         let li = createNode('li'),
+            carddiv = createNode('div'),
+            cardbodydiv = createNode('div'),
             img = createNode('img'),
-            span = createNode('span');
+            cardtitle = createNode('h5'),
+            cardtext = createNode('p');
             button = createNode('button');
-            // '<button id="order-button" type="button" class="btn btn-success">Success</button>';
-        img.src = ""; //product.picture.medium;
-        span.innerHTML = `${product.name}`;
-        
-        append(li, img);
-        append(li, span);
 
+        // Card Div
+        carddiv.className = "card";  
+        cardbodydiv.className = "card-body"; 
+        cardtitle.className = "card-title";
+        cardtext.className = "card-text";
+
+        img.src = ""; //product.picture.medium;
+
+        cardtitle.innerHTML = `${product.name}`;
+        cardtext.innerHTML = `${product.description}`;
+        
         // Button
         button.setAttribute("data-id", product.id);
         button.setAttribute('type', 'button');
@@ -63,8 +71,12 @@
         button.addEventListener("click", function () {
           CheckoutProduct(product.id);
         });
-        append(li, button);
 
+        append(li, carddiv);
+        append(carddiv, cardbodydiv);
+        append(cardbodydiv, cardtitle);
+        append(cardbodydiv, cardtext);
+        append(cardbodydiv, button);
         append(ul, li);
       })
     })
