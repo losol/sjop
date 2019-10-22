@@ -1,7 +1,9 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Shoppur.Config;
 using Shoppur.Data;
@@ -45,10 +47,13 @@ namespace Shoppur.Controllers
                 {
                     var session = stripeEvent.Data.Object as Stripe.Checkout.Session;
 					_logger.LogCritical("** YEAH MONEY COMING **: " + session.ToString()); 
+					
+					var order = await _context.Orders.Where(m => m.Id == Convert.ToInt32(session.ClientReferenceId)).FirstOrDefaultAsync();
+					order.Status = Models.Order.OrderStatus.Paid;
+					order.AddLog(session.ToJson());
+					_context.Update(order);
+					await _context.SaveChangesAsync();
 
-
-                    // Fulfill the purchase...
-                    // HandleCheckoutSession(session);
                 }
 				
 

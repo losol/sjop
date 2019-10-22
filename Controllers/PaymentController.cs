@@ -58,6 +58,7 @@ namespace Shoppur.Controllers
 			}
 			var options = new SessionCreateOptions
 			{
+				ClientReferenceId = order.Id.ToString(),
 				CustomerEmail = order.Customer.Email,
 				Locale = "nb",
 				PaymentMethodTypes = new List<string> {
@@ -70,6 +71,10 @@ namespace Shoppur.Controllers
 
 			var service = new SessionService();
 			Session session = service.Create(options);
+
+			order.PaymentProviderSessionId = session.Id;
+			_context.Update(order);
+			await _context.SaveChangesAsync();
 
 			return Ok(session);
 		}
