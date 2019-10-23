@@ -23,7 +23,9 @@ namespace Shoppur.Pages.Admin.Orders
 
         public async Task OnGetAsync()
         {
-            Order = await _context.Orders.ToListAsync();
+            Order = await _context.Orders
+                .Include(i => i.OrderLines)
+                .ToListAsync();
         }
     }
 }

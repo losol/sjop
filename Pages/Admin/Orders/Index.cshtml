@@ -5,25 +5,25 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1 class="display-2 pt-5">Ordrer</h1>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Order[0].PaymentProvider)
+                Kunde
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Order[0].Status)
+                Status
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Order[0].Shipping)
+                Pakkestatus
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Order[0].Log)
+                Produkter
+            </th>
+            <th>
+                Logg
             </th>
             <th></th>
         </tr>
@@ -32,13 +32,26 @@
 @foreach (var item in Model.Order) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.PaymentProvider)
+                @item.Customer.Email <br />
+                <br />
+
+                @item.Customer.Name <br />
+                @item.Customer.ShippingAddress.Address <br />
+                @item.Customer.ShippingAddress.Zip @item.Customer.ShippingAddress.City
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Shipping)
+            </td>
+            <td>
+                <ul>
+                @foreach (var ol in item.OrderLines) {
+                   <li>@ol.Quantity <span>x </span>@ol.ProductName</li>
+                }
+                </ul>
+                
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Log)
