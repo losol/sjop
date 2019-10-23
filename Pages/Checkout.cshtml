@@ -9,6 +9,7 @@
   <img class="d-block mx-auto mb-4" src="~/assets/images/kommunevapen-small.png" alt="" width="72" height="72">
   <h2>Bestilling</h2>
   <p class="lead">Kurt pakker og sender så snart du har fylt ut og sendt inn.</p>
+  <button id="empty-cart" class="btn btn-info">Tøm handlekurven</button>
 </div>
 
 <ul class="list-group mb-3" id="cart-list">
@@ -93,7 +94,7 @@
     function append(parent, el) {
       return parent.appendChild(el);
     }
-
+    
     const ul = document.getElementById('cart-list');
     const url = 'api/v1/cart'; 
       fetch(url)
@@ -157,6 +158,22 @@
     (function() {
       'use strict';
       window.addEventListener('load', function() {
+
+        // EMpty cart button
+        var emptycartbutton = document.getElementById('empty-cart');
+        const deletecarturl = '/api/v1/cart';
+        emptycartbutton.addEventListener('click', function(event) {
+                fetch(deletecarturl, {
+                        method: 'delete',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: null
+                    })
+                .then((none) => location.reload())});
+            
+
         // Fetch all the forms we want to apply custom Bootstrap validation styles to
         var forms = document.getElementsByClassName('needs-validation');
         // Loop over them and prevent submission

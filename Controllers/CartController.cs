@@ -44,6 +44,20 @@ namespace Shoppur.Controllers
             return cart;
         }
 
+        // DELETE: api/cart
+        [HttpDelete]
+        public async Task<CartVM> DeleteCart()
+        {
+            _logger.LogInformation("*** Delete cart request ***");
+
+            CartVM cart = new CartVM();
+
+            // Save Cart to session
+            HttpContext.Session.Set<CartVM>("_Cart", cart);
+            
+            return cart;
+        }
+
         // POST: api/cart/additem
         [HttpPost]
         [Route("additem")]
