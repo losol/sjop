@@ -3,8 +3,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Losvik kommune</title>
+    <title>@ViewBag.Title</title>
     <link rel="stylesheet" href="~/assets/css/main.css" />
+    <meta property="og:title"              content="@ViewBag.Title" />
+    <meta property="og:description"        content="@ViewBag.Description" />
+    <meta property="og:image"              content="/assets/images/social_logo.jpg" />
 </head>
 <body>
     <header>
@@ -20,7 +23,7 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted mt-5">
         <div class="container">
             <ul class="nav justify-content-center">
                 <li class="nav-item">

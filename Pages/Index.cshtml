@@ -1,7 +1,8 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Losvik kommune";
+    ViewData["Title"] = "Losvik-kalenderen 2020";
+    ViewData["Description"] = "Bestill kalenderen i dag.";
 }
 
 <div class="text-center">
@@ -9,7 +10,7 @@
     <div id="spinner" class="spinner-border text-info" role="status">
         <span class="sr-only">Laster...</span>
     </div>
-    <ul id="products" class="list-unstyled"></ul>
+    <ul id="products" class="list-unstyled my-5"></ul>
 </div>
 
 @section Scripts {
