@@ -11,6 +11,7 @@
         <span class="sr-only">Laster...</span>
     </div>
     <ul id="products" class="list-unstyled my-5"></ul>
+    <img src="/assets/images/logo-transparent.png" alt="Losvik kommune logo" class="py-5 w-50">
 </div>
 
 @section Scripts {
@@ -46,22 +47,31 @@
   fetch(url)
     .then((resp) => resp.json())
     .then(function(data) {
+      console.log(data);
       return data.map(function(product) {
         let li = createNode('li'),
             carddiv = createNode('div'),
             cardbodydiv = createNode('div'),
             img = createNode('img'),
-            cardtitle = createNode('h5'),
-            cardtext = createNode('p');
+            cardtitle = createNode('h2'),
+            cardtext = createNode('p'),
+            pricetag = createNode('span'),
+            price = createNode('span'),
             button = createNode('button');
 
         // Card Div
-        carddiv.className = "card";  
+        carddiv.classList.add('card', 'border-info', 'border-10', 'rounded-0');  
         cardbodydiv.className = "card-body"; 
         cardtitle.className = "card-title";
         cardtext.className = "card-text";
+        
 
         img.src = ""; //product.picture.medium;
+
+        pricetag.classList.add('h3');
+        price.innerHTML = `Kun kroner ${product.totalPrice.toFixed(0)},-`;
+        price.classList.add('badge', 'badge-pill', 'badge-info', 'h2');
+        append(pricetag, price)
 
         cardtitle.innerHTML = `${product.name}`;
         cardtext.innerHTML = `${product.description}`;
@@ -69,7 +79,7 @@
         // Button
         button.setAttribute("data-id", product.id);
         button.setAttribute('type', 'button');
-        button.innerHTML = 'Kj&oslash;p';
+        button.innerHTML = 'Bestill';
         button.className = 'btn btn-info';
         button.addEventListener("click", function () {
           CheckoutProduct(product.id);
@@ -77,6 +87,7 @@
 
         append(li, carddiv);
         append(carddiv, cardbodydiv);
+        append(cardbodydiv, pricetag);
         append(cardbodydiv, cardtitle);
         append(cardbodydiv, cardtext);
         append(cardbodydiv, button);
