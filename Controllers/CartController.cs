@@ -112,6 +112,53 @@ namespace Shoppur.Controllers
             return cart;
         }
 
+        // POST: api/cart/removeitem
+        [HttpPost]
+        [Route("removeitem")]
+        public async Task<ActionResult<CartVM>> RemoveProductFromCart([FromBody]AddItemToCartVM product)
+        {
+            _logger.LogInformation("*** Remove item from cart requested ***");
+            if (product == null)
+            {
+                return BadRequest();
+            }
+
+            CartVM cart =
+                HttpContext.Session.Get<CartVM>("_Cart") ??
+                new CartVM();
+            
+            if (cart.CartId == null) {
+                cart.CartId = Guid.NewGuid().ToString();
+            }
+
+            var dbproduct = await _context.Products.Where(o => o.Id == product.ProductId).FirstOrDefaultAsync();
+
+            var existingCartItem = cart.CartItems.Where(
+                p => p.ProductId == product.ProductId)
+                .FirstOrDefault() ?? null;
+            
+            if (existingCartItem != null ) {
+                cart.CartItems.Where(
+                    p => p.ProductId == product.ProductId)
+                    .FirstOrDefault()
+                    .Quantity -= 1;
+            } 
+
+            cart.CartItems.RemoveAll( p => p.Quantity == 0 );
+            
+            // TODO do this in a proper way
+            if (cart.ShippingCost.TotalShippingCost == 0) {{
+                cart.ShippingCost.ShippingCost = 31.2M;
+                cart.ShippingCost.VatPercent = 25;
+                cart.ShippingCost.TotalShippingCost = 39;
+            }}
+
+            // Save Cart to session
+            HttpContext.Session.Set<CartVM>("_Cart", cart);
+
+            return cart;
+        }
+
         // POST: api/cart/customer
         [HttpPost]
         [Route("customer")]
