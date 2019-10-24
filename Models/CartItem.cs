@@ -17,6 +17,8 @@ namespace Shoppur.Models
 
         public int Quantity { get; set; } = 1;
 
+        public decimal LineTotal => Product.TotalPrice * Quantity;
+
         [DataType(DataType.DateTime)]
         public DateTime DateCreated { get; set; } = DateTime.Now;
 

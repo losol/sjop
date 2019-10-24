@@ -79,15 +79,26 @@ namespace Shoppur.Controllers
 
             var dbproduct = await _context.Products.Where(o => o.Id == product.ProductId).FirstOrDefaultAsync();
 
-            var newItem = new CartItem() { 
-                ProductId = product.ProductId, 
-                Quantity = 1, 
-                CartId = Guid.Parse(cart.CartId),
-                Product = dbproduct
-                };
+            var existingCartItem = cart.CartItems.Where(
+                p => p.ProductId == product.ProductId)
+                .FirstOrDefault() ?? null;
+            
+            if (existingCartItem != null ) {
+                var cartitem = cart.CartItems.Where(
+                    p => p.ProductId == product.ProductId)
+                    .FirstOrDefault()
+                    .Quantity += 1;
+            } else {
+                var newItem = new CartItem() { 
+                    ProductId = product.ProductId, 
+                    Quantity = 1, 
+                    CartId = Guid.Parse(cart.CartId),
+                    Product = dbproduct
+                    };
 
-            cart.CartItems.Add(newItem);
-
+                cart.CartItems.Add(newItem);
+            }
+            
             // TODO do this in a proper way
             if (cart.ShippingCost.TotalShippingCost == 0) {{
                 cart.ShippingCost.ShippingCost = 31.2M;

@@ -109,11 +109,17 @@
           li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'lh-condensed');
 
           // Product name
-          productNameSpan.innerHTML = `${cartItem.product.name}`;
+          productNameSpan.innerHTML = `${cartItem.quantity}x <b>${cartItem.product.name}</b>`;
           append(li, productNameSpan);
 
           // Price
-          priceSpan.innerHTML = `kr ${cartItem.product.totalPrice.toFixed(2)}`;
+          if (cartItem.quantity != 1) {
+            priceSpan.innerHTML = `${cartItem.quantity}x ${cartItem.product.totalPrice.toFixed(2)} = kr ${cartItem.lineTotal} `;
+          } else {
+            priceSpan.innerHTML = `kr ${cartItem.product.totalPrice.toFixed(2)}`;
+          }
+
+
           append(li, priceSpan);
 
           append(ul, li);
