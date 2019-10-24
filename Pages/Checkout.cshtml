@@ -94,70 +94,110 @@
     function append(parent, el) {
       return parent.appendChild(el);
     }
+
+    refreshCart();
+
+    function refreshCart() {
+
+      const ul = document.getElementById('cart-list');
+      ul.innerHTML = '';
+      const url = 'api/v1/cart'; 
+        fetch(url)
+        .then((resp) => resp.json())
+        .then(function(data) {
+          console.log(data);
+          data.cartItems.map(function(cartItem) {
+            let li = createNode('li'),
+                qtyIncrease = createNode('button'),
+                qtyDecrease = createNode('button'),
+                productNameSpan = createNode('div')
+                priceSpan = createNode('span');
+
+            li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'lh-condensed');
+
+            // Product name
+            productNameSpan.innerHTML = `${cartItem.quantity}x <b>${cartItem.product.name}</b>`;
+
+            qtyIncrease.innerHTML = '+';
+            qtyIncrease.classList.add('btn', 'btn-sm', 'btn-light', 'ml-1');
+            qtyIncrease.addEventListener('click', function(event) {
+                  fetch('/api/v1/cart/additem', {
+                          method: 'post',
+                          headers: {
+                              'Accept': 'application/json',
+                              'Content-Type': 'application/json'
+                          },
+                          body: JSON.stringify({ ProductId : cartItem.product.id })
+                      })
+                  .then((none) => refreshCart())});
+
+
+            append(productNameSpan, qtyIncrease);
+            qtyDecrease.innerHTML = '-';
+            qtyDecrease.classList.add('btn', 'btn-sm', 'btn-light');
+            qtyDecrease.addEventListener('click', function(event) {
+                  fetch('/api/v1/cart/removeitem', {
+                          method: 'post',
+                          headers: {
+                              'Accept': 'application/json',
+                              'Content-Type': 'application/json'
+                          },
+                          body: JSON.stringify({ ProductId : cartItem.product.id })
+                      })
+                  .then((none) => refreshCart())});
+
+            append(productNameSpan, qtyDecrease);
+            append(li, productNameSpan);
+
+            // Price
+            if (cartItem.quantity != 1) {
+              priceSpan.innerHTML = `${cartItem.quantity}x ${cartItem.product.totalPrice.toFixed(2)} = kr ${cartItem.lineTotal} `;
+            } else {
+              priceSpan.innerHTML = `kr ${cartItem.product.totalPrice.toFixed(2)}`;
+            }
+
+
+            append(li, priceSpan);
+
+            append(ul, li);
+            });
+
+          // Add shipping
+          let shippingLi = createNode('li'),
+              shippingText = createNode('span'),
+              shippingCost = createNode('span');
+          
+          shippingLi.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'lh-condensed');
+          shippingText.innerHTML = `Frakt`;
+          shippingCost.innerHTML = `kr ${data.shippingCost.totalShippingCost}`;
+          
+          append(shippingLi, shippingText);
+          append(shippingLi, shippingCost);
+          append(ul, shippingLi);
+
+          // Add total
+          let totalLi = createNode('li'),
+              totalText = createNode('span'),
+              totalCost = createNode('span');
+          
+          totalLi.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'lh-condensed', 'font-weight-bold');
+          totalText.innerHTML = `Totalt`;
+          totalCost.innerHTML = `kr ${data.cartTotal.toFixed(2)}`;
+          
+          append(totalLi, totalText);
+          append(totalLi, totalCost);
+          append(ul, totalLi);
+        
+          })
+        
+
+
+        .catch(function(error) {
+          console.log(error);
+        }); 
+
+    }
     
-    const ul = document.getElementById('cart-list');
-    const url = 'api/v1/cart'; 
-      fetch(url)
-      .then((resp) => resp.json())
-      .then(function(data) {
-        console.log(data);
-        data.cartItems.map(function(cartItem) {
-          let li = createNode('li'),
-              productNameSpan = createNode('span')
-              priceSpan = createNode('span');
-
-          li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'lh-condensed');
-
-          // Product name
-          productNameSpan.innerHTML = `${cartItem.quantity}x <b>${cartItem.product.name}</b>`;
-          append(li, productNameSpan);
-
-          // Price
-          if (cartItem.quantity != 1) {
-            priceSpan.innerHTML = `${cartItem.quantity}x ${cartItem.product.totalPrice.toFixed(2)} = kr ${cartItem.lineTotal} `;
-          } else {
-            priceSpan.innerHTML = `kr ${cartItem.product.totalPrice.toFixed(2)}`;
-          }
-
-
-          append(li, priceSpan);
-
-          append(ul, li);
-          });
-
-        // Add shipping
-        let shippingLi = createNode('li'),
-            shippingText = createNode('span'),
-            shippingCost = createNode('span');
-        
-        shippingLi.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'lh-condensed');
-        shippingText.innerHTML = `Frakt`;
-        shippingCost.innerHTML = `kr ${data.shippingCost.totalShippingCost}`;
-        
-        append(shippingLi, shippingText);
-        append(shippingLi, shippingCost);
-        append(ul, shippingLi);
-
-        // Add total
-        let totalLi = createNode('li'),
-            totalText = createNode('span'),
-            totalCost = createNode('span');
-        
-        totalLi.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'lh-condensed', 'font-weight-bold');
-        totalText.innerHTML = `Totalt`;
-        totalCost.innerHTML = `kr ${data.cartTotal.toFixed(2)}`;
-        
-        append(totalLi, totalText);
-        append(totalLi, totalCost);
-        append(ul, totalLi);
-      
-        })
-      
-
-
-      .catch(function(error) {
-        console.log(error);
-      }); 
 
 
     // Example starter JavaScript for disabling form submissions if there are invalid fields
@@ -165,7 +205,7 @@
       'use strict';
       window.addEventListener('load', function() {
 
-        // EMpty cart button
+        // Empty cart button
         var emptycartbutton = document.getElementById('empty-cart');
         const deletecarturl = '/api/v1/cart';
         emptycartbutton.addEventListener('click', function(event) {

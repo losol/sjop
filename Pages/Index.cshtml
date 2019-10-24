@@ -19,7 +19,6 @@
   function CheckoutProduct(id) {
     const addToCartUrl = 'api/v1/cart/additem'; 
     var body = { ProductId : id };
-    console.log(JSON.stringify(body));
     fetch(addToCartUrl, {
         method: 'post',
         headers: {
