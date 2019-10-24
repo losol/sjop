@@ -10,6 +10,7 @@ using Shoppur.Data;
 using Shoppur.ViewModels;
 using Stripe;
 using Stripe.Checkout;
+using static Shoppur.Models.Order;
 
 namespace Shoppur.Controllers
 {
@@ -30,7 +31,7 @@ namespace Shoppur.Controllers
 			_stripeSettings = stripeSettings;
 			_siteSettings = siteSetttings;
 		}
- 
+
 		[HttpPost]
 		public async Task<ActionResult> Pay([FromBody]PayOrder payOrder)
 		{
@@ -43,6 +44,18 @@ namespace Shoppur.Controllers
 				.Include(order => order.OrderLines)
 				.FirstOrDefault();
 
+			switch (order.PaymentProvider)
+			{
+				case PaymentProviderType.StripeCheckout:
+					_logger.LogInformation($"* With StripeCheckout");
+					return await PayWithStripeCheckout(order);
+				default:
+					return BadRequest();
+			}
+		}
+
+		private async Task<ActionResult> PayWithStripeCheckout(Shoppur.Models.Order order)
+		{
 			var lines = new List<SessionLineItemOptions>();
 			foreach (var ol in order.OrderLines)
 			{
