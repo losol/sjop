@@ -1,0 +1,43 @@
+﻿@page
+@model Shoppur.Pages.Admin.Orders.ShippingListModel
+
+@{
+    ViewData["Title"] = "Losvik-kalenderen 2020";
+    ViewData["Description"] = "Bestill kalenderen i dag.";
+}
+
+<h1 class="display-2 pt-5">Ordre</h1>
+
+<table class="table"> 
+    <thead>
+        <tr>
+            <th>
+                Kunde
+            </th>
+            <th>
+                Produkter
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Orders) {
+        <tr>
+            <td>
+                @item.Customer.Email - OrdreId: @item.Id<br />
+                <br />
+
+                @item.Customer.Name <br />
+                @item.Customer.ShippingAddress.Address <br />
+                @item.Customer.ShippingAddress.Zip @item.Customer.ShippingAddress.City
+            </td>
+            <td>
+                <ul>
+                @foreach (var ol in item.OrderLines) {
+                   <li>@ol.Quantity <span>x </span>@ol.ProductName</li>
+                }
+                </ul>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
