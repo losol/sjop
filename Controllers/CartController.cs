@@ -216,7 +216,7 @@ namespace Shoppur.Controllers
 
             var newOrder = new Order() {
                 Customer = newCustomer,
-                PaymentProvider = PaymentProviderType.Stripe
+                PaymentProvider = PaymentProviderType.StripeCheckout
             };
             await _context.Orders.AddAsync(newOrder);
             await _context.SaveChangesAsync();

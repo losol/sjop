@@ -81,7 +81,8 @@ namespace Shoppur.Models
         public enum PaymentProviderType
         {
             None, 
-            Stripe,
+            StripeCheckout,
+            StripeInvoice,
             Vipps
         }
 

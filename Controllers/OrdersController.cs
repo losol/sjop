@@ -46,7 +46,7 @@ namespace Shoppur.Controllers
                 Email = "asdf@asdf.com"
             };
 
-            var paymentprovider = PaymentProviderType.Stripe;
+            var paymentprovider = PaymentProviderType.StripeCheckout;
 
             var order = new Order { 
                 Customer = customer, 

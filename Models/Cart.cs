@@ -13,7 +13,7 @@ namespace Shoppur.Models
 
         public CustomerInfo Customer {get;set;}
 
-        public PaymentProviderType PaymentProvider {get;set;} = PaymentProviderType.Stripe;
+        public PaymentProviderType PaymentProvider {get;set;} = PaymentProviderType.StripeCheckout;
         
 
         [DataType(DataType.DateTime)]
