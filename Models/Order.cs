@@ -83,6 +83,7 @@ namespace Shoppur.Models
 		{
 			None,
 			StripeCheckout,
+			StripeElements,
 			StripeBilling,
 			Vipps
 		}

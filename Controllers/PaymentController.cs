@@ -94,6 +94,14 @@ namespace Shoppur.Controllers
 			return Ok(session);
 		}
 
+		private async Task<ActionResult> PayWithStripeElements(Shoppur.Models.Order order, string token)
+		{
+			throw new NotImplementedException();
+			// Read Stripe API key from config
+			// StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
+
+			// return BadRequest();
+		}
 
 		private async Task<ActionResult> PayWithStripeBilling(Shoppur.Models.Order order)
 		{
