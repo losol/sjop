@@ -35,8 +35,6 @@ namespace Shoppur.Controllers
 		[HttpPost]
 		public async Task<ActionResult> Pay([FromBody]PayOrder payOrder)
 		{
-			StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
-
 			_logger.LogInformation($"*** Paying order: {payOrder.OrderId}.");
 
 			var order = _context.Orders
@@ -56,6 +54,10 @@ namespace Shoppur.Controllers
 
 		private async Task<ActionResult> PayWithStripeCheckout(Shoppur.Models.Order order)
 		{
+			// Read Stripe API key from config
+			StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
+
+			// Add orderlines to Checkout session
 			var lines = new List<SessionLineItemOptions>();
 			foreach (var ol in order.OrderLines)
 			{
@@ -90,6 +92,16 @@ namespace Shoppur.Controllers
 			await _context.SaveChangesAsync();
 
 			return Ok(session);
+		}
+
+
+		private async Task<ActionResult> PayWithStripeBilling(Shoppur.Models.Order order)
+		{
+			throw new NotImplementedException();
+			// Read Stripe API key from config
+			// StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
+
+			// return BadRequest();
 		}
 	}
 }
