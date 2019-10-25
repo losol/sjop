@@ -45,8 +45,22 @@ namespace Shoppur.Controllers
 			switch (order.PaymentProvider)
 			{
 				case PaymentProviderType.StripeCheckout:
-					_logger.LogInformation($"* With StripeCheckout");
+					_logger.LogInformation($"* Pay with StripeCheckout");
 					return await PayWithStripeCheckout(order);
+
+				case PaymentProviderType.StripeElements:
+					_logger.LogInformation($"* Pay with StripeElements");
+					_logger.LogError(payOrder.PaymentToken);
+					return await PayWithStripeElements(order, payOrder.PaymentToken);
+
+				case PaymentProviderType.StripeBilling:
+					_logger.LogInformation($"* Pay with StripeBilling");
+					return await PayWithStripeCheckout(order);
+
+				case PaymentProviderType.Vipps:
+					_logger.LogInformation($"* Pay with Vipps ");
+					return await PayWithStripeCheckout(order);
+
 				default:
 					return BadRequest();
 			}
@@ -61,6 +75,7 @@ namespace Shoppur.Controllers
 			var lines = new List<SessionLineItemOptions>();
 			foreach (var ol in order.OrderLines)
 			{
+				_logger.LogInformation($"linjepris: {ol.TotalPrice}");
 				var newline = new SessionLineItemOptions
 				{
 					Name = ol.ProductName,
@@ -77,8 +92,8 @@ namespace Shoppur.Controllers
 				CustomerEmail = order.Customer.Email,
 				Locale = "nb",
 				PaymentMethodTypes = new List<string> {
-				"card",
-			},
+					"card",
+				},
 				LineItems = lines,
 				SuccessUrl = _siteSettings.BaseUrl + "/PaymentSuccess?session_id={CHECKOUT_SESSION_ID}",
 				CancelUrl = _siteSettings.BaseUrl + "/PaymentFailed",
@@ -96,20 +111,59 @@ namespace Shoppur.Controllers
 
 		private async Task<ActionResult> PayWithStripeElements(Shoppur.Models.Order order, string token)
 		{
-			throw new NotImplementedException();
 			// Read Stripe API key from config
-			// StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
+			StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
 
-			// return BadRequest();
+			if (token == null)
+			{
+				return BadRequest();
+			}
+
+			var options = new ChargeCreateOptions
+			{
+				Customer = StripeCustomer(order).Id,
+				Amount = Convert.ToInt32(order.OrderTotalprice * 100),
+				Currency = "nok",
+				Description = "Bestilling fra Losvik kommune",
+				Source = token,
+				ReceiptEmail = order.Customer.Email,
+				StatementDescriptor = "Losvik kommune"
+			};
+
+			var service = new ChargeService();
+			Charge charge = await service.CreateAsync(options);
+
+			return Ok(charge);
 		}
 
 		private async Task<ActionResult> PayWithStripeBilling(Shoppur.Models.Order order)
 		{
-			throw new NotImplementedException();
 			// Read Stripe API key from config
-			// StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
+			StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
+			throw new NotImplementedException();
+		}
+
+		private async Task<ActionResult> PayWithVipps(Shoppur.Models.Order order)
+		{
+			throw new NotImplementedException();
 
 			// return BadRequest();
+		}
+
+		private Customer StripeCustomer(Shoppur.Models.Order order)
+		{
+			var options = new CustomerCreateOptions
+			{
+				Name = order.Customer.Name,
+				Email = order.Customer.Email,
+				Phone = order.Customer.Phone,
+				PreferredLocales = new List<string> { "nb", "en" }
+			};
+
+			var service = new CustomerService();
+			var customer = service.Create(options);
+
+			return customer;
 		}
 	}
 }

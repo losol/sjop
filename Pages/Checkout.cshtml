@@ -114,17 +114,27 @@
 
       <h4 class="mb-3">Betaling</h4>
 
-      <div class="d-block my-3">
-        <div class="custom-control custom-radio">
+      <div class="d-block my-3">  
+        <div class="form-check form-check-inline">
           <input
-            id="card"
-            value="card"
-            name="payment"
+            id="paymentprovider-stripecheckout"
+            value="StripeCheckout"
+            name="paymentprovider"
             type="radio"
-            class="custom-control-input"
+            class="form-check-input paymentprovider-input"
             checked
           />
-          <label class="custom-control-label" for="card">Betal med kort</label>
+          <label class="form-check-label" for="paymentprovider-stripecheckout">Betal med Stripe</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            id="paymentprovider-stripeelements"
+            value="StripeElements"
+            name="paymentprovider"
+            type="radio"
+            class="form-check-input paymentprovider-input"
+          />
+          <label class="form-check-label" for="paymentprovider-stripeelements">Betal med kort</label>
         </div>
       </div>
 
@@ -147,7 +157,8 @@
 @section Scripts {
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-  // Set up Stripe and Stripe elements
+  (function() {
+     // Set up Stripe and Stripe elements
   var stripe = Stripe("@StripeSettings.PublishableKey");
   var elements = stripe.elements({
 	  locale: 'no',
@@ -186,41 +197,6 @@ card.addEventListener('change', function(event) {
   }
 });
 
-// Handle form submission.
-var form = document.getElementById('order-form');
-form.addEventListener('submit', function(event) {
-  event.preventDefault();
-
-  stripe.createToken(card).then(function(result) {
-    if (result.error) {
-      // Inform the user if there was an error.
-      var errorElement = document.getElementById('card-errors');
-      errorElement.textContent = result.error.message;
-    } else {
-      // Send the token to your server.
-      stripeTokenHandler(result.token);
-    }
-  });
-});
-
-// Submit the form with the token ID.
-function stripeTokenHandler(token) {
-  // Insert the token ID into the form so it gets submitted to the server
-  var form = document.getElementById('order-form');
-  var hiddenInput = document.createElement('input');
-  hiddenInput.setAttribute('type', 'hidden');
-  hiddenInput.setAttribute('name', 'stripeToken');
-  hiddenInput.setAttribute('value', token.id);
-  form.appendChild(hiddenInput);
-
-  // Submit the form
-  form.submit();
-}
-</script>
-
-<script>
-  
-
   // Fetch and populate products from Cart
   function createNode(element) {
     return document.createElement(element);
@@ -231,6 +207,30 @@ function stripeTokenHandler(token) {
   }
 
   refreshCart();
+  setPaymentProvider();
+
+  var paymentRadios = Array.from(document.getElementsByClassName("paymentprovider-input"));
+  paymentRadios.forEach (element =>
+    element.addEventListener('click', function (event) {
+      setPaymentProvider();
+    })
+  );
+
+  function setPaymentProvider() {
+    // const payRadio = document.getElementById("paymentprovider");
+    selectedProvider = document.querySelector('input[name="paymentprovider"]:checked').value
+
+    fetch('api/v1/cart/paymentprovider', {
+            method: "post",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ PaymentProviderType : selectedProvider }) 
+          })
+          .then( (response) => console.log(response.json()));
+  
+  }
 
   function refreshCart() {
     const ul = document.getElementById("cart-list");
@@ -389,9 +389,6 @@ function stripeTokenHandler(token) {
     );
   })();
 
-  // Helper for serializing form to JSON
-
-  (function() {
     function toJSONString(form) {
       var obj = {};
       var elements = form.querySelectorAll("input, select, textarea");
@@ -432,25 +429,47 @@ function stripeTokenHandler(token) {
               console.log(json);
               return fetch(submitOrderUrl, {
                 method: "post"
-              }).then(response => response.json());
+              })
+              .then(response => response.json());
             })
 
             .then(function(order) {
-              var orderobject = { OrderId: order.id };
-              return fetch(paymentUrl, {
-                method: "post",
-                headers: {
-                  Accept: "application/json",
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify(orderobject)
-              }).then(response => response.json());
-            })
+              if (selectedProvider == "StripeElements") {
+                var orderobject = { OrderId: order.id, PaymentToken: null};
+
+                stripe.createToken(card)
+                  .then(function(result) 
+                    {
+                      if (result.error) {
+                        // Inform the user if there was an error.
+                        var errorElement = document.getElementById('card-errors');
+                        errorElement.textContent = result.error.message;
+                        return null;
+                      } else {
+                        var token = result.token;
+                        return token.id;
+                      }
+                    })
+                  .then(function(token) {
+                    orderobject.PaymentToken = token;
+                    return fetch(paymentUrl, {
+                      method: "post",
+                      headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json"
+                      },
+                      body: JSON.stringify(orderobject)
+                    })
+                  });
+                }})
 
             .then(function(payment) {
-              stripe.redirectToCheckout({
-                sessionId: payment.id
-              });
+              if (selectedProvider == "StripeCheckout") {
+                stripe.redirectToCheckout({
+                  sessionId: payment.id
+                });
+              }
+              
             })
 
             .catch(function(error) {
@@ -462,4 +481,5 @@ function stripeTokenHandler(token) {
     });
   })();
 </script>
+
 }

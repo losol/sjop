@@ -24,6 +24,8 @@ namespace Shoppur.Models
 		public ShippingStatus Shipping { get; set; } = ShippingStatus.Draft;
 		public ShippingType ShippingMethod { get; set; } = ShippingType.Mail;
 
+		public decimal OrderTotalprice => OrderLines.Sum(w => w.TotalPrice);
+
 		public string Log { get; set; }
 
 		// Navigational properties
