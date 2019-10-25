@@ -121,7 +121,11 @@ namespace Shoppur.Controllers
 				Currency = "nok",
 				Description = "Bestilling fra Losvik kommune",
 				ReceiptEmail = order.Customer.Email,
-				StatementDescriptor = "Losvik kommune"
+				StatementDescriptor = "Losvik kommune",
+				Metadata = new Dictionary<String, String>()
+				{
+					{ "OrderId", order.Id.ToString()}
+				}
 			};
 
 			var intent = service.Create(paymentIntentCreateOptions);
@@ -131,8 +135,6 @@ namespace Shoppur.Controllers
 
 		private async Task<ActionResult> PayWithStripeBilling(Shoppur.Models.Order order)
 		{
-			// Read Stripe API key from config
-			StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
 			throw new NotImplementedException();
 		}
 
@@ -151,23 +153,6 @@ namespace Shoppur.Controllers
 				Email = order.Customer.Email,
 				Phone = order.Customer.Phone,
 				PreferredLocales = new List<string> { "nb", "en" }
-			};
-
-			var service = new CustomerService();
-			var customer = service.Create(options);
-
-			return customer;
-		}
-
-		private Customer StripeCustomer(Shoppur.Models.Order order, string cardToken)
-		{
-			var options = new CustomerCreateOptions
-			{
-				Name = order.Customer.Name,
-				Email = order.Customer.Email,
-				Phone = order.Customer.Phone,
-				PreferredLocales = new List<string> { "nb", "en" },
-				Source = cardToken
 			};
 
 			var service = new CustomerService();
