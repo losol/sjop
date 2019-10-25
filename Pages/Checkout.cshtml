@@ -171,47 +171,51 @@
 @section Scripts {
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-  (function() {
-     // Set up Stripe and Stripe elements
+  // *********************************
+  // Set up Stripe and Stripe elements
+  // *********************************
   var stripe = Stripe("@StripeSettings.PublishableKey");
   var elements = stripe.elements({
-	  locale: 'no',
+    locale: 'no',
   });
-// Custom styling can be passed to options when creating an Element.
-// (Note that this demo uses a wider set of styles than the guide below.)
-var style = {
-  base: {
-    color: '#32325d',
-    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-    fontSmoothing: 'antialiased',
-    fontSize: '16px',
-    '::placeholder': {
-      color: '#669'
+
+  var style = {
+    base: {
+      color: '#32325d',
+      fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+      fontSmoothing: 'antialiased',
+      fontSize: '16px',
+      '::placeholder': {
+        color: '#669'
+      }
+    },
+    invalid: {
+      color: '#fa755a',
+      iconColor: '#fa755a'
     }
-  },
-  invalid: {
-    color: '#fa755a',
-    iconColor: '#fa755a'
-  }
-};
+  };
 
-// Create an instance of the card Element.
-var card = elements.create('card', {style: style});
+  // Create an instance of the card Element.
+  var card = elements.create('card', {style: style});
 
-// Add an instance of the card Element into the `card-element` <div>.
-card.mount('#card-element');
+  // Add an instance of the card Element into the `card-element` <div>.
+  card.mount('#card-element');
 
-// Handle real-time validation errors from the card Element.
-card.addEventListener('change', function(event) {
-  var displayError = document.getElementById('card-errors');
-  if (event.error) {
-    displayError.textContent = event.error.message;
-  } else {
-    displayError.textContent = '';
-  }
-});
+  // Handle real-time validation errors from the card Element.
+  card.addEventListener('change', function(event) {
+    var displayError = document.getElementById('card-errors');
+    if (event.error) {
+      displayError.textContent = event.error.message;
+      this.valid = false;
+    } else {
+      displayError.textContent = '';
+      this.valid = true;
+    }
+  });
 
-  // Fetch and populate products from Cart
+  // *************************************
+  // DOM helpers
+  // *************************************
   function createNode(element) {
     return document.createElement(element);
   }
@@ -220,9 +224,12 @@ card.addEventListener('change', function(event) {
     return parent.appendChild(el);
   }
 
-  setPaymentProvider();
-  setShippingMethod();
+  // ******************************************
+  // Initialize and add eventlisteners for form
+  // ******************************************
 
+  // Shipping Methods
+  setShippingMethod();
   var shippingRadios = Array.from(document.getElementsByClassName("shippingmethod-input"));
   shippingRadios.forEach (element =>
     element.addEventListener('click', function (event) {
@@ -230,30 +237,29 @@ card.addEventListener('change', function(event) {
     })
   );
 
+  function setShippingMethod() {
+    var selectedShippingMethod = document.querySelector('input[name="shippingmethod"]:checked').value;
+    console.log(selectedShippingMethod);
+
+    fetch('/api/v1/cart/shippingprovider', {
+        method: "post",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ ShippingMethod : selectedShippingMethod }) 
+      })
+      .then( (none) => refreshCart() );
+  }
+
+  // Payment Provider
+  setPaymentProvider();
   var paymentRadios = Array.from(document.getElementsByClassName("paymentprovider-input"));
   paymentRadios.forEach (element =>
     element.addEventListener('click', function (event) {
       setPaymentProvider();
     })
   );
-
- 
-
-  function setShippingMethod() {
-    var selectedShippingMethod = document.querySelector('input[name="shippingmethod"]:checked').value;
-    console.log(selectedShippingMethod);
-
-    fetch('/api/v1/cart/shippingprovider', {
-            method: "post",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ ShippingMethod : selectedShippingMethod }) 
-          })
-          .then( (none) => refreshCart() );
-  
-  }
 
   function setPaymentProvider() {
     selectedProvider = document.querySelector('input[name="paymentprovider"]:checked').value;
@@ -270,6 +276,9 @@ card.addEventListener('change', function(event) {
   
   }
 
+  // *******************
+  // Update cart listing
+  // *******************
   function refreshCart() {
     const ul = document.getElementById("cart-list");
     ul.innerHTML = "";
@@ -384,142 +393,130 @@ card.addEventListener('change', function(event) {
       .catch(function(error) {
         console.log(error);
       });
+    }
+
+  function toJSONString(form) {
+    var obj = {};
+    var elements = form.querySelectorAll("input, select, textarea");
+    for (var i = 0; i < elements.length; ++i) {
+      var element = elements[i];
+      var name = element.name;
+      var value = element.value;
+
+      if (name) {
+        obj[name] = value;
+      }
+    }
+    return JSON.stringify(obj);
   }
 
-  // Example starter JavaScript for disabling form submissions if there are invalid fields
-  (function() {
-    "use strict";
-    window.addEventListener(
-      "load",
-      function() {
-        // Empty cart button
-        var emptycartbutton = document.getElementById("empty-cart");
-        const deletecarturl = "/api/v1/cart";
-        emptycartbutton.addEventListener("click", function(event) {
-          fetch(deletecarturl, {
-            method: "delete",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json"
-            },
-            body: null
-          }).then(none => location.reload());
-        });
-
-        // Fetch all the forms we want to apply custom Bootstrap validation styles to
-        var forms = document.getElementsByClassName("needs-validation");
-        // Loop over them and prevent submission
-        var validation = Array.prototype.filter.call(forms, function(form) {
-          form.addEventListener(
-            "submit",
-            function(event) {
-              if (form.checkValidity() === false) {
-                event.preventDefault();
-                event.stopPropagation();
-              }
-              form.classList.add("was-validated");
-            },
-            false
-          );
-        });
+  document.addEventListener("DOMContentLoaded", function() {
+    var form = document.getElementById("order-form");
+    form.addEventListener(
+      "submit",
+      function(event) {
+        event.preventDefault();
+        if (form.checkValidity() === false) {
+          event.stopPropagation();
+        } else {
+          stripe.createToken(card).then(function(result) {
+          if (result.error) {
+            var errorElement = document.getElementById('card-errors');
+            errorElement.textContent = result.error.message;
+          } else {
+            // Send the token to your server.
+            PlaceOrderAndPay();
+          }
+          });
+        }
+        form.classList.add("was-validated");
+        
       },
       false
     );
-  })();
+  });
 
-    function toJSONString(form) {
-      var obj = {};
-      var elements = form.querySelectorAll("input, select, textarea");
-      for (var i = 0; i < elements.length; ++i) {
-        var element = elements[i];
-        var name = element.name;
-        var value = element.value;
 
-        if (name) {
-          obj[name] = value;
-        }
-      }
-      return JSON.stringify(obj);
-    }
+  function PlaceOrderAndPay() {
+    alert('hr');
+    SaveCustomerInfoToCart();
+    fetch('api/v1/cart/submit-order', {
+      method: "post"
+      })
+    .then((response) => response.json())
 
-    document.addEventListener("DOMContentLoaded", function() {
-      var form = document.getElementById("order-form");
-      // var output = document.getElementById("output");
-      form.addEventListener(
-        "submit",
-        function(e) {
-          e.preventDefault();
-          var formjson = toJSONString(this);
-          const updateCustomerUrl = "api/v1/cart/customer";
-          const submitOrderUrl = "api/v1/cart/submit-order";
-          const paymentUrl = "api/v1/payment";
-
-          fetch(updateCustomerUrl, {
-            method: "post",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json"
-            },
-            body: formjson
-          })
-            .then(response => response.json())
-            .then(function(json) {
-              console.log(json);
-              return fetch(submitOrderUrl, {
-                method: "post"
-              })
-              .then(response => response.json());
-            })
-
-            .then(function(order) {
-              var orderobject = { OrderId: order.id };
-
-                return fetch(paymentUrl, {
-                      method: "post",
-                      headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json"
-                      },
-                      body: JSON.stringify(orderobject)
-                    });
-
-                })
-                
-            .then(resp => resp.json())
-            .then(function(payment) {
-              if (selectedProvider == "StripeElements") {
-                  stripe.handleCardPayment(
-                    payment.client_secret, card, {
-                      payment_method_data: {
-                        billing_details: {name: document.getElementById("name").value}
-                      }
-                    }
-                  ).then(function(result) {
-                    if (result.error) {
-                      // Display error.message in your UI.
-                      window.location = '/PaymentFailed';
-                    } else {
-                      console.log(result);
-                      window.location = '/PaymentSuccess';
-                    }
-                  });
-              }
-              if (selectedProvider == "StripeCheckout") {
-                stripe.redirectToCheckout({
-                  sessionId: payment.id
-                });
-              }
-              
-            })
-
-            .catch(function(error) {
-              console.log(error);
-            });
+    // Get payment info
+    .then(function(order) {
+      var orderobject = { OrderId: order.id };
+      return fetch('api/v1/payment', {
+        method: "post",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
         },
-        false
-      );
-    });
-  })();
+        body: JSON.stringify(orderobject)
+      });
+    })
+    .then(response => response.json())
+
+    // Handle payment
+    .then(function(payment) {
+      if (selectedProvider == "StripeElements") {
+          stripe.handleCardPayment(
+            payment.client_secret, card, {
+              payment_method_data: {
+                billing_details: {name: document.getElementById("name").value}
+              }
+            })
+          .then(function(result) {
+            if (result.error) {
+              // Display error.message in your UI.
+              window.location = '/PaymentFailed';
+            } else {
+              console.log(result);
+              window.location = '/PaymentSuccess';
+            }
+          });
+      }
+
+      if (selectedProvider == "StripeCheckout") {
+        stripe.redirectToCheckout({
+          sessionId: payment.id
+        });
+      }
+            
+          })
+
+          .catch(function(error) {
+            console.log(error);
+          });
+  }
+
+  function SaveCustomerInfoToCart() {
+    var form = document.getElementById("order-form");
+    var formjson = toJSONString(form);
+    fetch('/api/v1/cart/customer', {
+      method: "post",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: formjson
+    })
+  }
+
+  // Empty cart functionality
+  var emptycartbutton = document.getElementById("empty-cart");
+  emptycartbutton.addEventListener("click", function(event) {
+    fetch('/api/v1/cart', {
+      method: "delete",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: null
+    }).then(none => refreshCart());
+  });
 </script>
 
 }
