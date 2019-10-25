@@ -18,323 +18,372 @@ using static Shoppur.ViewModels.CartVM;
 
 namespace Shoppur.Controllers
 {
-    [Route("api/v1/cart")]
-    [ApiController]
-    public class CartController : ControllerBase
-    {
-        private readonly ApplicationDbContext _context;
-        private readonly ILogger _logger;
-        public CartController(ApplicationDbContext context, ILogger<CartController> logger)
-        {
-            _context = context;
-            _logger = logger;
-        }
+	[Route("api/v1/cart")]
+	[ApiController]
+	public class CartController : ControllerBase
+	{
+		private readonly ApplicationDbContext _context;
+		private readonly ILogger _logger;
+		public CartController(ApplicationDbContext context, ILogger<CartController> logger)
+		{
+			_context = context;
+			_logger = logger;
+		}
 
 
-        // GET: api/cart
-        [HttpGet]
-        public async Task<CartVM> GetCart()
-        {
-            _logger.LogInformation("*** Cart request ***");
+		// GET: api/cart
+		[HttpGet]
+		public async Task<CartVM> GetCart()
+		{
+			_logger.LogInformation("*** Cart request ***");
 
-            CartVM cart =
-                HttpContext.Session.Get<CartVM>("_Cart") ??
-                SaveNewCartToSession();
-            
-            return cart;
-        }
+			CartVM cart =
+				HttpContext.Session.Get<CartVM>("_Cart") ??
+				SaveNewCartToSession();
 
-        // DELETE: api/cart
-        [HttpDelete]
-        public async Task<CartVM> DeleteCart()
-        {
-            _logger.LogInformation("*** Delete cart request ***");
+			return cart;
+		}
 
-            CartVM cart = new CartVM();
+		// DELETE: api/cart
+		[HttpDelete]
+		public async Task<CartVM> DeleteCart()
+		{
+			_logger.LogInformation("*** Delete cart request ***");
 
-            // Save Cart to session
-            HttpContext.Session.Set<CartVM>("_Cart", cart);
-            
-            return cart;
-        }
+			CartVM cart = new CartVM();
 
-        // POST: api/cart/additem
-        [HttpPost]
-        [Route("additem")]
-        public async Task<ActionResult<CartVM>> AddProductToCart([FromBody]AddItemToCartVM product)
-        {
-            _logger.LogInformation("*** Add item to cart requested ***");
-            if (product == null)
-            {
-                return BadRequest();
-            }
+			// Save Cart to session
+			HttpContext.Session.Set<CartVM>("_Cart", cart);
 
-            CartVM cart =
-                HttpContext.Session.Get<CartVM>("_Cart") ??
-                new CartVM();
-            
-            if (cart.CartId == null) {
-                cart.CartId = Guid.NewGuid().ToString();
-            }
+			return cart;
+		}
 
-            var dbproduct = await _context.Products.Where(o => o.Id == product.ProductId).FirstOrDefaultAsync();
+		// POST: api/cart/additem
+		[HttpPost]
+		[Route("additem")]
+		public async Task<ActionResult<CartVM>> AddProductToCart([FromBody]AddItemToCartVM product)
+		{
+			_logger.LogInformation("*** Add item to cart requested ***");
+			if (product == null)
+			{
+				return BadRequest();
+			}
 
-            var existingCartItem = cart.CartItems.Where(
-                p => p.ProductId == product.ProductId)
-                .FirstOrDefault() ?? null;
-            
-            if (existingCartItem != null ) {
-                var cartitem = cart.CartItems.Where(
-                    p => p.ProductId == product.ProductId)
-                    .FirstOrDefault()
-                    .Quantity += 1;
-            } else {
-                var newItem = new CartItem() { 
-                    ProductId = product.ProductId, 
-                    Quantity = 1, 
-                    CartId = Guid.Parse(cart.CartId),
-                    Product = dbproduct
-                    };
+			CartVM cart =
+				HttpContext.Session.Get<CartVM>("_Cart") ??
+				new CartVM();
 
-                cart.CartItems.Add(newItem);
-            }
-            
-            // TODO do this in a proper way
-            if (cart.ShippingCost.TotalShippingCost == 0) {{
-                cart.ShippingCost.ShippingCost = 31.2M;
-                cart.ShippingCost.VatPercent = 25;
-                cart.ShippingCost.TotalShippingCost = 39;
-            }}
+			if (cart.CartId == null)
+			{
+				cart.CartId = Guid.NewGuid().ToString();
+			}
 
-            // Save Cart to session
-            HttpContext.Session.Set<CartVM>("_Cart", cart);
+			var dbproduct = await _context.Products.Where(o => o.Id == product.ProductId).FirstOrDefaultAsync();
 
-            return cart;
-        }
+			var existingCartItem = cart.CartItems.Where(
+				p => p.ProductId == product.ProductId)
+				.FirstOrDefault() ?? null;
 
-        // POST: api/cart/removeitem
-        [HttpPost]
-        [Route("removeitem")]
-        public async Task<ActionResult<CartVM>> RemoveProductFromCart([FromBody]AddItemToCartVM product)
-        {
-            _logger.LogInformation("*** Remove item from cart requested ***");
-            if (product == null)
-            {
-                return BadRequest();
-            }
+			if (existingCartItem != null)
+			{
+				var cartitem = cart.CartItems.Where(
+					p => p.ProductId == product.ProductId)
+					.FirstOrDefault()
+					.Quantity += 1;
+			}
+			else
+			{
+				var newItem = new CartItem()
+				{
+					ProductId = product.ProductId,
+					Quantity = 1,
+					CartId = Guid.Parse(cart.CartId),
+					Product = dbproduct
+				};
 
-            CartVM cart =
-                HttpContext.Session.Get<CartVM>("_Cart") ??
-                new CartVM();
-            
-            if (cart.CartId == null) {
-                cart.CartId = Guid.NewGuid().ToString();
-            }
+				cart.CartItems.Add(newItem);
+			}
 
-            var dbproduct = await _context.Products.Where(o => o.Id == product.ProductId).FirstOrDefaultAsync();
+			// TODO do this in a proper way
+			if (cart.ShippingCost.TotalShippingCost == 0)
+			{
+				{
+					cart.ShippingCost.ShippingCost = 31.2M;
+					cart.ShippingCost.VatPercent = 25;
+					cart.ShippingCost.TotalShippingCost = 39;
+				}
+			}
 
-            var existingCartItem = cart.CartItems.Where(
-                p => p.ProductId == product.ProductId)
-                .FirstOrDefault() ?? null;
-            
-            if (existingCartItem != null ) {
-                cart.CartItems.Where(
-                    p => p.ProductId == product.ProductId)
-                    .FirstOrDefault()
-                    .Quantity -= 1;
-            } 
+			// Save Cart to session
+			HttpContext.Session.Set<CartVM>("_Cart", cart);
 
-            cart.CartItems.RemoveAll( p => p.Quantity == 0 );
-            
-            // TODO do this in a proper way
-            if (cart.ShippingCost.TotalShippingCost == 0) {{
-                cart.ShippingCost.ShippingCost = 31.2M;
-                cart.ShippingCost.VatPercent = 25;
-                cart.ShippingCost.TotalShippingCost = 39;
-            }}
+			return cart;
+		}
 
-            // Save Cart to session
-            HttpContext.Session.Set<CartVM>("_Cart", cart);
+		// POST: api/cart/removeitem
+		[HttpPost]
+		[Route("removeitem")]
+		public async Task<ActionResult<CartVM>> RemoveProductFromCart([FromBody]AddItemToCartVM product)
+		{
+			_logger.LogInformation("*** Remove item from cart requested ***");
+			if (product == null)
+			{
+				return BadRequest();
+			}
 
-            return cart;
-        }
+			CartVM cart =
+				HttpContext.Session.Get<CartVM>("_Cart") ??
+				new CartVM();
 
-        // POST: api/cart/customer
-        [HttpPost]
-        [Route("customer")]
-        public async Task<ActionResult<CartVM>> UpdateCustomer([FromBody]CartCustomerInfo customer)
-        {
-            _logger.LogInformation("*** Add customer to cart ***");
-            if (customer == null)
-            {
-                return BadRequest();
-            }
+			if (cart.CartId == null)
+			{
+				cart.CartId = Guid.NewGuid().ToString();
+			}
 
-            CartVM cart =
-                HttpContext.Session.Get<CartVM>("_Cart") ??
-                new CartVM();
-            
-            if (cart.CartId == null) {
-                cart.CartId = Guid.NewGuid().ToString();
-            }
+			var dbproduct = await _context.Products.Where(o => o.Id == product.ProductId).FirstOrDefaultAsync();
 
-            var cartCustomer = new CartCustomerInfo() { 
-                Name = customer.Name,
-                Email = customer.Email,
-                Address = customer.Address,
-                Zip = customer.Zip,
-                City = customer.City,
-                Country = customer.Country
-                };
+			var existingCartItem = cart.CartItems.Where(
+				p => p.ProductId == product.ProductId)
+				.FirstOrDefault() ?? null;
 
-            cart.Customer = cartCustomer;
+			if (existingCartItem != null)
+			{
+				cart.CartItems.Where(
+					p => p.ProductId == product.ProductId)
+					.FirstOrDefault()
+					.Quantity -= 1;
+			}
 
-            // Save Cart to session
-            HttpContext.Session.Set<CartVM>("_Cart", cart);
+			cart.CartItems.RemoveAll(p => p.Quantity == 0);
 
-            return cart;
-        }
+			// TODO do this in a proper way
+			if (cart.ShippingCost.TotalShippingCost == 0)
+			{
+				{
+					cart.ShippingCost.ShippingCost = 31.2M;
+					cart.ShippingCost.VatPercent = 25;
+					cart.ShippingCost.TotalShippingCost = 39;
+				}
+			}
 
-        // POST: api/cart/submit-order
-        [HttpPost]
-        [Route("submit-order")]
-        public async Task<ActionResult<Order>> SubmitOrder()
-        {
-            _logger.LogInformation("*** Submitting cart as order ***");
-            var cart = HttpContext.Session.Get<CartVM>("_Cart");
+			// Save Cart to session
+			HttpContext.Session.Set<CartVM>("_Cart", cart);
 
-            var newCustomer = new CustomerInfo() {
-                Name = cart.Customer.Name,
-                Email = cart.Customer.Email,
-                ShippingAddress = new StreetAddress() {
-                    Address = cart.Customer.Address, 
-                    Zip = cart.Customer.Zip, 
-                    City = cart.Customer.City, 
-                    Country = cart.Customer.Country
-                }
-            };
+			return cart;
+		}
 
-            var newOrder = new Order() {
-                Customer = newCustomer,
-                PaymentProvider = PaymentProviderType.StripeCheckout
-            };
-            await _context.Orders.AddAsync(newOrder);
-            await _context.SaveChangesAsync();
+		// POST: api/cart/customer
+		[HttpPost]
+		[Route("customer")]
+		public async Task<ActionResult<CartVM>> UpdateCustomer([FromBody]CartCustomerInfo customer)
+		{
+			_logger.LogInformation("*** Add customer to cart ***");
+			if (customer == null)
+			{
+				return BadRequest();
+			}
 
-            foreach (var cartitem in cart.CartItems) {
-                var product = await _context.Products.Where(p => p.Id == cartitem.ProductId).FirstOrDefaultAsync();
-                var line = new OrderLine() {
-                    ProductId = cartitem.ProductId,
-                    ProductName = cartitem.Product.Name,
-                    OrderId = newOrder.Id,
-                    Quantity = cartitem.Quantity,
-                    Price = product.Price,
-                    VatPercent = product.VatPercent
-                };
-                newOrder.OrderLines.Add(line);
-            }
+			CartVM cart =
+				HttpContext.Session.Get<CartVM>("_Cart") ??
+				new CartVM();
 
-            // Add shipping
-            var shippingline = new OrderLine() {
-                ProductName = "Frakt", 
-                OrderId = newOrder.Id,
-                Price = cart.ShippingCost.ShippingCost
-            };
-            newOrder.OrderLines.Add(shippingline);
+			if (cart.CartId == null)
+			{
+				cart.CartId = Guid.NewGuid().ToString();
+			}
 
-            _context.Orders.Update(newOrder);
-            await _context.SaveChangesAsync();
+			var cartCustomer = new CartCustomerInfo()
+			{
+				Name = customer.Name,
+				Email = customer.Email,
+				Address = customer.Address,
+				Zip = customer.Zip,
+				City = customer.City,
+				Country = customer.Country
+			};
 
-            _logger.LogInformation($"*** Added order with id: {newOrder.Id} ***");
+			cart.Customer = cartCustomer;
 
-            return newOrder;
-        }
+			// Save Cart to session
+			HttpContext.Session.Set<CartVM>("_Cart", cart);
 
-        // GET: api/cart/item/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CartItem>> GetCartItem(Guid id)
-        {
-            var cartItem = await _context.CartItems.FindAsync(id);
+			return cart;
+		}
 
-            if (cartItem == null)
-            {
-                return NotFound();
-            }
+		// POST: api/cart/customer
+		[HttpPost]
+		[Route("paymentprovider")]
+		public async Task<ActionResult<CartVM>> UpdatePaymentProvider([FromBody]PaymentProviderVM paymentprovider)
+		{
+			_logger.LogInformation($"*** Update paymentprovider in cart to {paymentprovider.PaymentProviderType} ***");
 
-            return cartItem;
-        }
+			CartVM cart =
+				HttpContext.Session.Get<CartVM>("_Cart") ??
+				new CartVM();
 
-        // PUT: api/cart/item/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCartItem(Guid id, CartItem cartItem)
-        {
-            if (id != cartItem.CartItemId)
-            {
-                return BadRequest();
-            }
+			if (cart.CartId == null)
+			{
+				cart.CartId = Guid.NewGuid().ToString();
+			}
 
-            _context.Entry(cartItem).State = EntityState.Modified;
+			if (paymentprovider.PaymentProviderType != null)
+			{
+				// Enum.TryParse(yourString, out yourEnum)
+				cart.PaymentProvider = (PaymentProviderType)Enum.Parse(typeof(PaymentProviderType), paymentprovider.PaymentProviderType);
+			}
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CartItemExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+			// Save Cart to session
+			HttpContext.Session.Set<CartVM>("_Cart", cart);
 
-            return NoContent();
-        }
+			return cart;
+		}
 
-        // POST: api/cart/item
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPost]
-        public async Task<ActionResult<CartItem>> PostCartItem(CartItem cartItem)
-        {
-            _context.CartItems.Add(cartItem);
-            await _context.SaveChangesAsync();
+		// POST: api/cart/submit-order
+		[HttpPost]
+		[Route("submit-order")]
+		public async Task<ActionResult<Order>> SubmitOrder()
+		{
+			_logger.LogInformation("*** Submitting cart as order ***");
+			var cart = HttpContext.Session.Get<CartVM>("_Cart");
 
-            return CreatedAtAction("GetCartItem", new { id = cartItem.CartItemId }, cartItem);
-        }
+			var newCustomer = new CustomerInfo()
+			{
+				Name = cart.Customer.Name,
+				Email = cart.Customer.Email,
+				ShippingAddress = new StreetAddress()
+				{
+					Address = cart.Customer.Address,
+					Zip = cart.Customer.Zip,
+					City = cart.Customer.City,
+					Country = cart.Customer.Country
+				}
+			};
 
-        // DELETE: api/cart/item/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<CartItem>> DeleteCartItem(Guid id)
-        {
-            var cartItem = await _context.CartItems.FindAsync(id);
-            if (cartItem == null)
-            {
-                return NotFound();
-            }
+			var newOrder = new Order()
+			{
+				Customer = newCustomer,
+				PaymentProvider = cart.PaymentProvider
+			};
+			await _context.Orders.AddAsync(newOrder);
+			await _context.SaveChangesAsync();
 
-            _context.CartItems.Remove(cartItem);
-            await _context.SaveChangesAsync();
+			foreach (var cartitem in cart.CartItems)
+			{
+				var product = await _context.Products.Where(p => p.Id == cartitem.ProductId).FirstOrDefaultAsync();
+				var line = new OrderLine()
+				{
+					ProductId = cartitem.ProductId,
+					ProductName = cartitem.Product.Name,
+					OrderId = newOrder.Id,
+					Quantity = cartitem.Quantity,
+					Price = product.Price,
+					VatPercent = product.VatPercent
+				};
+				newOrder.OrderLines.Add(line);
+			}
 
-            return cartItem;
-        }
+			// Add shipping
+			var shippingline = new OrderLine()
+			{
+				ProductName = "Frakt",
+				OrderId = newOrder.Id,
+				Price = cart.ShippingCost.ShippingCost
+			};
+			newOrder.OrderLines.Add(shippingline);
 
-        private bool CartItemExists(Guid id)
-        {
-            return _context.CartItems.Any(e => e.CartItemId == id);
-        }
+			_context.Orders.Update(newOrder);
+			await _context.SaveChangesAsync();
 
-        private CartVM SaveNewCartToSession()
-        {
-            var cart = new CartVM();
-            cart.CartId = Guid.NewGuid().ToString();
-            HttpContext.Session.Set<CartVM>("_Cart", cart);
-            return cart;
-        }
-    }
+			_logger.LogInformation($"*** Added order with id: {newOrder.Id} ***");
+
+			return newOrder;
+		}
+
+		// GET: api/cart/item/5
+		[HttpGet("{id}")]
+		public async Task<ActionResult<CartItem>> GetCartItem(Guid id)
+		{
+			var cartItem = await _context.CartItems.FindAsync(id);
+
+			if (cartItem == null)
+			{
+				return NotFound();
+			}
+
+			return cartItem;
+		}
+
+		// PUT: api/cart/item/5
+		// To protect from overposting attacks, please enable the specific properties you want to bind to, for
+		// more details see https://aka.ms/RazorPagesCRUD.
+		[HttpPut("{id}")]
+		public async Task<IActionResult> PutCartItem(Guid id, CartItem cartItem)
+		{
+			if (id != cartItem.CartItemId)
+			{
+				return BadRequest();
+			}
+
+			_context.Entry(cartItem).State = EntityState.Modified;
+
+			try
+			{
+				await _context.SaveChangesAsync();
+			}
+			catch (DbUpdateConcurrencyException)
+			{
+				if (!CartItemExists(id))
+				{
+					return NotFound();
+				}
+				else
+				{
+					throw;
+				}
+			}
+
+			return NoContent();
+		}
+
+		// POST: api/cart/item
+		// To protect from overposting attacks, please enable the specific properties you want to bind to, for
+		// more details see https://aka.ms/RazorPagesCRUD.
+		[HttpPost]
+		public async Task<ActionResult<CartItem>> PostCartItem(CartItem cartItem)
+		{
+			_context.CartItems.Add(cartItem);
+			await _context.SaveChangesAsync();
+
+			return CreatedAtAction("GetCartItem", new { id = cartItem.CartItemId }, cartItem);
+		}
+
+		// DELETE: api/cart/item/5
+		[HttpDelete("{id}")]
+		public async Task<ActionResult<CartItem>> DeleteCartItem(Guid id)
+		{
+			var cartItem = await _context.CartItems.FindAsync(id);
+			if (cartItem == null)
+			{
+				return NotFound();
+			}
+
+			_context.CartItems.Remove(cartItem);
+			await _context.SaveChangesAsync();
+
+			return cartItem;
+		}
+
+		private bool CartItemExists(Guid id)
+		{
+			return _context.CartItems.Any(e => e.CartItemId == id);
+		}
+
+		private CartVM SaveNewCartToSession()
+		{
+			var cart = new CartVM();
+			cart.CartId = Guid.NewGuid().ToString();
+			HttpContext.Session.Set<CartVM>("_Cart", cart);
+			return cart;
+		}
+	}
 }

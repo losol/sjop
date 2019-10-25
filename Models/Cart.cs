@@ -7,18 +7,18 @@ using static Shoppur.Models.Order;
 
 namespace Shoppur.Models
 {
-    public class Cart
-    {
-        public Guid CartId { get; set; }
+	public class Cart
+	{
+		public Guid CartId { get; set; }
 
-        public CustomerInfo Customer {get;set;}
+		public CustomerInfo Customer { get; set; }
 
-        public PaymentProviderType PaymentProvider {get;set;} = PaymentProviderType.StripeCheckout;
-        
+		public PaymentProviderType PaymentProvider { get; set; } = PaymentProviderType.StripeElements;
 
-        [DataType(DataType.DateTime)]
-        public DateTime DateCreated { get; set; } = DateTime.Now;
 
-        public ICollection<CartItem> CartItems { get; set; }
-    }
+		[DataType(DataType.DateTime)]
+		public DateTime DateCreated { get; set; } = DateTime.Now;
+
+		public ICollection<CartItem> CartItems { get; set; }
+	}
 }

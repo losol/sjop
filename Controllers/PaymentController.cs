@@ -10,6 +10,7 @@ using Shoppur.Data;
 using Shoppur.ViewModels;
 using Stripe;
 using Stripe.Checkout;
+using static Shoppur.Models.Order;
 
 namespace Shoppur.Controllers
 {
@@ -30,12 +31,10 @@ namespace Shoppur.Controllers
 			_stripeSettings = stripeSettings;
 			_siteSettings = siteSetttings;
 		}
- 
+
 		[HttpPost]
 		public async Task<ActionResult> Pay([FromBody]PayOrder payOrder)
 		{
-			StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
-
 			_logger.LogInformation($"*** Paying order: {payOrder.OrderId}.");
 
 			var order = _context.Orders
@@ -43,9 +42,39 @@ namespace Shoppur.Controllers
 				.Include(order => order.OrderLines)
 				.FirstOrDefault();
 
+			switch (order.PaymentProvider)
+			{
+				case PaymentProviderType.StripeCheckout:
+					_logger.LogInformation($"* Pay with StripeCheckout");
+					return await PayWithStripeCheckout(order);
+
+				case PaymentProviderType.StripeElements:
+					_logger.LogInformation($"* Pay with StripeElements");
+					return await PayWithStripeElements(order, payOrder.PaymentToken);
+
+				case PaymentProviderType.StripeBilling:
+					_logger.LogInformation($"* Pay with StripeBilling");
+					return await PayWithStripeCheckout(order);
+
+				case PaymentProviderType.Vipps:
+					_logger.LogInformation($"* Pay with Vipps ");
+					return await PayWithStripeCheckout(order);
+
+				default:
+					return BadRequest();
+			}
+		}
+
+		private async Task<ActionResult> PayWithStripeCheckout(Shoppur.Models.Order order)
+		{
+			// Read Stripe API key from config
+			StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
+
+			// Add orderlines to Checkout session
 			var lines = new List<SessionLineItemOptions>();
 			foreach (var ol in order.OrderLines)
 			{
+				_logger.LogInformation($"linjepris: {ol.TotalPrice}");
 				var newline = new SessionLineItemOptions
 				{
 					Name = ol.ProductName,
@@ -62,8 +91,8 @@ namespace Shoppur.Controllers
 				CustomerEmail = order.Customer.Email,
 				Locale = "nb",
 				PaymentMethodTypes = new List<string> {
-				"card",
-			},
+					"card",
+				},
 				LineItems = lines,
 				SuccessUrl = _siteSettings.BaseUrl + "/PaymentSuccess?session_id={CHECKOUT_SESSION_ID}",
 				CancelUrl = _siteSettings.BaseUrl + "/PaymentFailed",
@@ -77,6 +106,59 @@ namespace Shoppur.Controllers
 			await _context.SaveChangesAsync();
 
 			return Ok(session);
+		}
+
+		private async Task<ActionResult> PayWithStripeElements(Shoppur.Models.Order order, string cardToken)
+		{
+			// Read Stripe API key from config
+			StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
+
+			var service = new PaymentIntentService();
+			var paymentIntentCreateOptions = new PaymentIntentCreateOptions
+			{
+				Customer = StripeCustomer(order).Id,
+				Amount = Convert.ToInt32(order.OrderTotalprice * 100),
+				Currency = "nok",
+				Description = "Bestilling fra Losvik kommune",
+				ReceiptEmail = order.Customer.Email,
+				StatementDescriptor = "Losvik kommune",
+				Metadata = new Dictionary<String, String>()
+				{
+					{ "OrderId", order.Id.ToString()}
+				}
+			};
+
+			var intent = service.Create(paymentIntentCreateOptions);
+
+			return Ok(intent);
+		}
+
+		private async Task<ActionResult> PayWithStripeBilling(Shoppur.Models.Order order)
+		{
+			throw new NotImplementedException();
+		}
+
+		private async Task<ActionResult> PayWithVipps(Shoppur.Models.Order order)
+		{
+			throw new NotImplementedException();
+
+			// return BadRequest();
+		}
+
+		private Customer StripeCustomer(Shoppur.Models.Order order)
+		{
+			var options = new CustomerCreateOptions
+			{
+				Name = order.Customer.Name,
+				Email = order.Customer.Email,
+				Phone = order.Customer.Phone,
+				PreferredLocales = new List<string> { "nb", "en" }
+			};
+
+			var service = new CustomerService();
+			var customer = service.Create(options);
+
+			return customer;
 		}
 	}
 }

@@ -10,22 +10,23 @@ using Shoppur.Models;
 
 namespace Shoppur.Pages.Admin.Orders
 {
-    public class IndexModel : PageModel
-    {
-        private readonly Shoppur.Data.ApplicationDbContext _context;
+	public class IndexModel : PageModel
+	{
+		private readonly Shoppur.Data.ApplicationDbContext _context;
 
-        public IndexModel(Shoppur.Data.ApplicationDbContext context)
-        {
-            _context = context;
-        }
+		public IndexModel(Shoppur.Data.ApplicationDbContext context)
+		{
+			_context = context;
+		}
 
-        public IList<Order> Order { get;set; }
+		public IList<Order> Order { get; set; }
 
-        public async Task OnGetAsync()
-        {
-            Order = await _context.Orders
-                .Include(i => i.OrderLines)
-                .ToListAsync();
-        }
-    }
+		public async Task OnGetAsync()
+		{
+			Order = await _context.Orders
+				.Include(i => i.OrderLines)
+				.OrderByDescending(i => i.Id)
+				.ToListAsync();
+		}
+	}
 }
