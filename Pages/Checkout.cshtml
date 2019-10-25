@@ -434,36 +434,38 @@ card.addEventListener('change', function(event) {
             })
 
             .then(function(order) {
-              if (selectedProvider == "StripeElements") {
-                var orderobject = { OrderId: order.id, PaymentToken: null};
+              var orderobject = { OrderId: order.id };
 
-                stripe.createToken(card)
-                  .then(function(result) 
-                    {
-                      if (result.error) {
-                        // Inform the user if there was an error.
-                        var errorElement = document.getElementById('card-errors');
-                        errorElement.textContent = result.error.message;
-                        return null;
-                      } else {
-                        var token = result.token;
-                        return token.id;
-                      }
-                    })
-                  .then(function(token) {
-                    orderobject.PaymentToken = token;
-                    return fetch(paymentUrl, {
+                return fetch(paymentUrl, {
                       method: "post",
                       headers: {
                         Accept: "application/json",
                         "Content-Type": "application/json"
                       },
                       body: JSON.stringify(orderobject)
-                    })
-                  });
-                }})
+                    });
 
+                })
+                
+            .then(resp => resp.json())
             .then(function(payment) {
+              if (selectedProvider == "StripeElements") {
+                  stripe.handleCardPayment(
+                    payment.client_secret, card, {
+                      payment_method_data: {
+                        billing_details: {name: document.getElementById("name").value}
+                      }
+                    }
+                  ).then(function(result) {
+                    if (result.error) {
+                      // Display error.message in your UI.
+                      window.location = '/PaymentFailed';
+                    } else {
+                      console.log(result);
+                      window.location = '/PaymentSuccess';
+                    }
+                  });
+              }
               if (selectedProvider == "StripeCheckout") {
                 stripe.redirectToCheckout({
                   sessionId: payment.id

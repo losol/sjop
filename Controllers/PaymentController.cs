@@ -50,7 +50,6 @@ namespace Shoppur.Controllers
 
 				case PaymentProviderType.StripeElements:
 					_logger.LogInformation($"* Pay with StripeElements");
-					_logger.LogError(payOrder.PaymentToken);
 					return await PayWithStripeElements(order, payOrder.PaymentToken);
 
 				case PaymentProviderType.StripeBilling:
@@ -109,31 +108,25 @@ namespace Shoppur.Controllers
 			return Ok(session);
 		}
 
-		private async Task<ActionResult> PayWithStripeElements(Shoppur.Models.Order order, string token)
+		private async Task<ActionResult> PayWithStripeElements(Shoppur.Models.Order order, string cardToken)
 		{
 			// Read Stripe API key from config
 			StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
 
-			if (token == null)
-			{
-				return BadRequest();
-			}
-
-			var options = new ChargeCreateOptions
+			var service = new PaymentIntentService();
+			var paymentIntentCreateOptions = new PaymentIntentCreateOptions
 			{
 				Customer = StripeCustomer(order).Id,
 				Amount = Convert.ToInt32(order.OrderTotalprice * 100),
 				Currency = "nok",
 				Description = "Bestilling fra Losvik kommune",
-				Source = token,
 				ReceiptEmail = order.Customer.Email,
 				StatementDescriptor = "Losvik kommune"
 			};
 
-			var service = new ChargeService();
-			Charge charge = await service.CreateAsync(options);
+			var intent = service.Create(paymentIntentCreateOptions);
 
-			return Ok(charge);
+			return Ok(intent);
 		}
 
 		private async Task<ActionResult> PayWithStripeBilling(Shoppur.Models.Order order)
@@ -158,6 +151,23 @@ namespace Shoppur.Controllers
 				Email = order.Customer.Email,
 				Phone = order.Customer.Phone,
 				PreferredLocales = new List<string> { "nb", "en" }
+			};
+
+			var service = new CustomerService();
+			var customer = service.Create(options);
+
+			return customer;
+		}
+
+		private Customer StripeCustomer(Shoppur.Models.Order order, string cardToken)
+		{
+			var options = new CustomerCreateOptions
+			{
+				Name = order.Customer.Name,
+				Email = order.Customer.Email,
+				Phone = order.Customer.Phone,
+				PreferredLocales = new List<string> { "nb", "en" },
+				Source = cardToken
 			};
 
 			var service = new CustomerService();
