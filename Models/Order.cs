@@ -18,7 +18,7 @@ namespace Shoppur.Models
 		[Required]
 		public int Id { get; set; }
 		public CustomerInfo Customer { get; set; }
-		public PaymentProviderType PaymentProvider { get; set; }
+		public PaymentProviderType PaymentProvider { get; set; } = PaymentProviderType.StripeElements;
 		public string PaymentProviderSessionId { get; set; }
 		public OrderStatus Status { get; set; } = OrderStatus.Draft;
 		public ShippingStatus Shipping { get; set; } = ShippingStatus.Draft;

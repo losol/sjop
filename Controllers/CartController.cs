@@ -104,15 +104,8 @@ namespace Shoppur.Controllers
 				cart.CartItems.Add(newItem);
 			}
 
-			// TODO do this in a proper way
-			if (cart.ShippingCost.TotalShippingCost == 0)
-			{
-				{
-					cart.ShippingCost.ShippingCost = 31.2M;
-					cart.ShippingCost.VatPercent = 25;
-					cart.ShippingCost.TotalShippingCost = 39;
-				}
-			}
+			// Update shipping cost
+			cart.ShippingCost = GetShippingCost(cart);
 
 			// Save Cart to session
 			HttpContext.Session.Set<CartVM>("_Cart", cart);
@@ -210,6 +203,36 @@ namespace Shoppur.Controllers
 			return cart;
 		}
 
+		// POST: api/cart/shippingprovider
+		[HttpPost]
+		[Route("shippingprovider")]
+		public async Task<ActionResult<CartVM>> UpdateShippingProvider([FromBody]ShippingProviderVM shippingProvider)
+		{
+			_logger.LogInformation($"*** Update paymentprovider in cart to {shippingProvider.ShippingMethod} ***");
+
+			CartVM cart =
+				HttpContext.Session.Get<CartVM>("_Cart") ??
+				new CartVM();
+
+			if (cart.CartId == null)
+			{
+				cart.CartId = Guid.NewGuid().ToString();
+			}
+
+			if (shippingProvider.ShippingMethod != null)
+			{
+				cart.ShippingMethod = (ShippingType)Enum.Parse(typeof(ShippingType), shippingProvider.ShippingMethod);
+			}
+
+			// Update shipping cost
+			cart.ShippingCost = GetShippingCost(cart);
+
+			// Save Cart to session
+			HttpContext.Session.Set<CartVM>("_Cart", cart);
+
+			return cart;
+		}
+
 		// POST: api/cart/customer
 		[HttpPost]
 		[Route("paymentprovider")]
@@ -228,7 +251,6 @@ namespace Shoppur.Controllers
 
 			if (paymentprovider.PaymentProviderType != null)
 			{
-				// Enum.TryParse(yourString, out yourEnum)
 				cart.PaymentProvider = (PaymentProviderType)Enum.Parse(typeof(PaymentProviderType), paymentprovider.PaymentProviderType);
 			}
 
@@ -262,7 +284,8 @@ namespace Shoppur.Controllers
 			var newOrder = new Order()
 			{
 				Customer = newCustomer,
-				PaymentProvider = cart.PaymentProvider
+				PaymentProvider = cart.PaymentProvider,
+				ShippingMethod = cart.ShippingMethod
 			};
 			await _context.Orders.AddAsync(newOrder);
 			await _context.SaveChangesAsync();
@@ -384,6 +407,26 @@ namespace Shoppur.Controllers
 			cart.CartId = Guid.NewGuid().ToString();
 			HttpContext.Session.Set<CartVM>("_Cart", cart);
 			return cart;
+		}
+
+		private ShippingDetails GetShippingCost(CartVM c)
+		{
+			var shippingDetails = new ShippingDetails();
+
+			if (c.ShippingMethod == ShippingType.Mail)
+			{
+				shippingDetails.ShippingCost = 31.2M;
+				shippingDetails.VatPercent = 25;
+				shippingDetails.TotalShippingCost = 39;
+			}
+			else
+			{
+				shippingDetails.ShippingCost = 0;
+				shippingDetails.VatPercent = 25;
+				shippingDetails.TotalShippingCost = 0;
+			}
+
+			return shippingDetails;
 		}
 	}
 }

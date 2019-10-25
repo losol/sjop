@@ -81,7 +81,7 @@
             required
           />
           <div class="invalid-feedback">
-            Zip code required.
+            Vi trenger postnummeret ditt.
           </div>
         </div>
         <div class="col-md-9 mb-3">
@@ -112,7 +112,31 @@
       </div>
       <hr class="mb-4" />
 
-      <h4 class="mb-3">Betaling</h4>
+      <h4 class="mb-3">Frakt og betaling</h4>
+
+      <div class="d-block my-3">  
+        <div class="form-check form-check-inline">
+          <input
+            id="shipping-mail"
+            value="Mail"
+            name="shippingmethod"
+            type="radio"
+            class="form-check-input shippingmethod-input"
+            checked
+          />
+          <label class="form-check-label" for="shipping-mail" >Send i posten</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            id="shipping-none"
+            value="None"
+            name="shippingmethod"
+            type="radio"
+            class="form-check-input shippingmethod-input"
+          />
+          <label class="form-check-label" for="shipping-none" >Hent i Losheim</label>
+        </div>
+      </div>
 
       <div class="d-block my-3">  
         <div class="form-check form-check-inline">
@@ -196,8 +220,15 @@ card.addEventListener('change', function(event) {
     return parent.appendChild(el);
   }
 
-  refreshCart();
   setPaymentProvider();
+  setShippingMethod();
+
+  var shippingRadios = Array.from(document.getElementsByClassName("shippingmethod-input"));
+  shippingRadios.forEach (element =>
+    element.addEventListener('click', function (event) {
+      setShippingMethod();
+    })
+  );
 
   var paymentRadios = Array.from(document.getElementsByClassName("paymentprovider-input"));
   paymentRadios.forEach (element =>
@@ -206,9 +237,26 @@ card.addEventListener('change', function(event) {
     })
   );
 
+ 
+
+  function setShippingMethod() {
+    var selectedShippingMethod = document.querySelector('input[name="shippingmethod"]:checked').value;
+    console.log(selectedShippingMethod);
+
+    fetch('/api/v1/cart/shippingprovider', {
+            method: "post",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ ShippingMethod : selectedShippingMethod }) 
+          })
+          .then( (none) => refreshCart() );
+  
+  }
+
   function setPaymentProvider() {
-    // const payRadio = document.getElementById("paymentprovider");
-    selectedProvider = document.querySelector('input[name="paymentprovider"]:checked').value
+    selectedProvider = document.querySelector('input[name="paymentprovider"]:checked').value;
 
     fetch('api/v1/cart/paymentprovider', {
             method: "post",
