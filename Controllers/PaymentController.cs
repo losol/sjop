@@ -103,7 +103,7 @@ namespace Sjop.Controllers
 			};
 
 			var service = new SessionService();
-			Session session = service.Create(options);
+			Session session = await service.CreateAsync(options);
 
 			order.PaymentProviderSessionId = session.Id;
 			_context.Update(order);
@@ -133,17 +133,17 @@ namespace Sjop.Controllers
 			};
 
             var service = new PaymentIntentService();
-			var intent = service.Create(paymentIntentCreateOptions);
+			var intent = await service.CreateAsync(paymentIntentCreateOptions);
 
 			return Ok(intent);
 		}
 
-		private async Task<ActionResult> PayWithStripeBilling(Sjop.Models.Order order)
+		private Task<ActionResult> PayWithStripeBilling(Sjop.Models.Order order)
 		{
 			throw new NotImplementedException();
 		}
 
-		private async Task<ActionResult> PayWithVipps(Sjop.Models.Order order)
+		private Task<ActionResult> PayWithVipps(Sjop.Models.Order order)
 		{
 			throw new NotImplementedException();
 

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Sjop.Data;
 using Sjop.Models;
+using static Sjop.Models.Order;
 
 namespace Sjop.Pages.Admin.Orders
 {

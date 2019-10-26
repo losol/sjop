@@ -230,7 +230,7 @@ namespace Sjop.Controllers
 			// Save Cart to session
 			HttpContext.Session.Set<CartVM>("_Cart", cart);
 
-			return cart;
+			return Ok(cart);
 		}
 
 		// POST: api/cart/customer
