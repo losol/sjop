@@ -8,6 +8,7 @@
 
 <h1 class="display-2 pt-5">Ordrer</h1>
 
+<h2>Betalte ordrer</h2> 
 <table class="table">
     <thead>
         <tr>
@@ -27,7 +28,66 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Order) {
+@foreach (var item in Model.PaidOrders) {
+        <tr>
+            <td>
+
+                <b>@item.Customer.Name</b> <br />
+                @item.Customer.ShippingAddress.Address <br />
+                @item.Customer.ShippingAddress.Zip @item.Customer.ShippingAddress.City
+                <br><br>    
+                Skal ha
+                <ul>
+                @foreach (var ol in item.OrderLines) {
+                   <li>@ol.Quantity <span>x </span>@ol.ProductName</li>
+                }
+                </ul>
+            </td>
+            <td>
+
+                @item.Customer.Email <br />
+                Sende som: @item.ShippingMethod
+                <br />
+                <br />
+                Ordrestatus: @Html.DisplayFor(modelItem => item.Status) <br />
+                Sendestatus: @Html.DisplayFor(modelItem => item.Shipping)
+                
+            </td>
+            <td>
+                <span title="@Html.DisplayFor(modelItem => item.Log)">Logg</span>
+                
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> 
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+
+<h2>Betalte ordrer</h2> 
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Ordre
+            </th>
+            <th>
+                Infno
+            </th>
+            <th>
+                Pakkestatus
+            </th>
+            <th>
+                Logg
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.OtherOrders) {
         <tr>
             <td>
 
