@@ -9,12 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Shoppur.Data;
-using Shoppur.Models;
-using Shoppur.ViewModels;
-using static Shoppur.Models.Order;
+using Sjop.Data;
+using Sjop.Models;
+using Sjop.ViewModels;
+using static Sjop.Models.Order;
 
-namespace Shoppur.Controllers
+namespace Sjop.Controllers
 {
 	[Authorize(Policy = "RequireAdministratorRole")]
 	[Route("api/v1/orders")]

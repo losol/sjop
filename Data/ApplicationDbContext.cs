@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Shoppur.Models;
+using Sjop.Models;
 
-namespace Shoppur.Data
+namespace Sjop.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -13,9 +13,9 @@ namespace Shoppur.Data
             : base(options)
         {
         }
-        public DbSet<Shoppur.Models.Product> Products { get; set; }
-        public DbSet<Shoppur.Models.Order> Orders { get; set; }
-        public DbSet<Shoppur.Models.OrderLine> OrderLines { get; set; }
-        public DbSet<Shoppur.Models.CartItem> CartItems { get; set; }
+        public DbSet<Sjop.Models.Product> Products { get; set; }
+        public DbSet<Sjop.Models.Order> Orders { get; set; }
+        public DbSet<Sjop.Models.OrderLine> OrderLines { get; set; }
+        public DbSet<Sjop.Models.CartItem> CartItems { get; set; }
     }
 }

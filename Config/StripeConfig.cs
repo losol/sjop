@@ -1,4 +1,4 @@
-namespace Shoppur.Config {
+namespace Sjop.Config {
 
 	public class StripeSettings {
 		public string SecretKey {get;set;}

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Shoppur.Models;
+using Sjop.Models;
 
-namespace Shoppur.ViewModels
+namespace Sjop.ViewModels
 {
 	public class PayOrder
 	{

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using static Shoppur.Models.Order;
+using static Sjop.Models.Order;
 
-namespace Shoppur.Models
+namespace Sjop.Models
 {
 	public class Cart
 	{

@@ -8,20 +8,20 @@ using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
-using Shoppur.Data;
+using Sjop.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Http;
-using Shoppur.Models;
+using Sjop.Models;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Shoppur.Config;
+using Sjop.Config;
 
-namespace Shoppur
+namespace Sjop
 {
     public class Startup
     {
@@ -85,7 +85,7 @@ namespace Shoppur
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Shoppur API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Sjop API", Version = "v1" });
             });
 
             services.AddAuthorization(options =>
@@ -155,7 +155,7 @@ namespace Shoppur
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Shoppur API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sjop API V1");
             });
 
             // Use sessions for storing carts

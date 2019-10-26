@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Shoppur.Config;
-using Shoppur.Data;
-using Shoppur.ViewModels;
+using Sjop.Config;
+using Sjop.Data;
+using Sjop.ViewModels;
 using Stripe;
 using Stripe.Checkout;
-using static Shoppur.Models.Order;
+using static Sjop.Models.Order;
 
-namespace Shoppur.Controllers
+namespace Sjop.Controllers
 {
 
 	[Route("api/v1/payment")]
@@ -69,7 +69,7 @@ namespace Shoppur.Controllers
 			}
 		}
 
-		private async Task<ActionResult> PayWithStripeCheckout(Shoppur.Models.Order order)
+		private async Task<ActionResult> PayWithStripeCheckout(Sjop.Models.Order order)
 		{
 			// Read Stripe API key from config
 			StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
@@ -112,7 +112,7 @@ namespace Shoppur.Controllers
 			return Ok(session);
 		}
 
-		private async Task<ActionResult> PayWithStripeElements(Shoppur.Models.Order order)
+		private async Task<ActionResult> PayWithStripeElements(Sjop.Models.Order order)
 		{
 			// Read Stripe API key from config
 			StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
@@ -138,19 +138,19 @@ namespace Shoppur.Controllers
 			return Ok(intent);
 		}
 
-		private async Task<ActionResult> PayWithStripeBilling(Shoppur.Models.Order order)
+		private async Task<ActionResult> PayWithStripeBilling(Sjop.Models.Order order)
 		{
 			throw new NotImplementedException();
 		}
 
-		private async Task<ActionResult> PayWithVipps(Shoppur.Models.Order order)
+		private async Task<ActionResult> PayWithVipps(Sjop.Models.Order order)
 		{
 			throw new NotImplementedException();
 
 			// return BadRequest();
 		}
 
-		private Customer StripeCustomer(Shoppur.Models.Order order)
+		private Customer StripeCustomer(Sjop.Models.Order order)
 		{
 			var options = new CustomerCreateOptions
 			{
