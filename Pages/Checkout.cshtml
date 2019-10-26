@@ -161,7 +161,7 @@
     </div>
 
       <hr class="mb-4" />
-      <button class="btn btn-primary btn-lg btn-block" type="submit">
+      <button id="submit-order" class="btn btn-primary btn-lg btn-block" type="submit">
         Betal
       </button>
     </form>
@@ -222,6 +222,12 @@
 
   function append(parent, el) {
     return parent.appendChild(el);
+  }
+
+  const submitButton = document.getElementById("submit-order");
+  function spinSubmitButton() {
+      submitButton.disabled = true;
+      submitButton.innerHTML = '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>Sender til Kurt...';
   }
 
   // ******************************************
@@ -442,12 +448,22 @@
   });
 
 
+
   async function PlaceOrderAndPay() {
+    spinSubmitButton();
     await SaveCustomerInfoToCart();
     fetch('api/v1/cart/submit-order', {
       method: "post"
       })
     .then((response) => response.json())
+    .then(function(response) {
+         if (!response.ok) {
+             var err = new Error("HTTP status code: " + response.status);
+             console.log(err);
+             window.location = '/PaymentFailed';
+         }
+         return response;
+    })
 
     // Get payment info
     .then(function(order) {
@@ -459,7 +475,8 @@
           "Content-Type": "application/json"
         },
         body: JSON.stringify(orderobject)
-      });
+      })
+    
     })
     .then(response => response.json())
 
@@ -481,7 +498,12 @@
               console.log(result);
               window.location = '/PaymentSuccess';
             }
-          });
+          })
+          
+          .catch(function(error) {
+        console.log(error);
+        window.location = '/PaymentFailed';
+      });
       }
 
       if (selectedProvider == "StripeCheckout") {
