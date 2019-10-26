@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <UserSecretsId>aspnet-Shoppur-638F45FB-3D3E-4A8C-ACAC-D2B6D75C8A25</UserSecretsId>
+    <UserSecretsId>aspnet-Sjop-638F45FB-3D3E-4A8C-ACAC-D2B6D75C8A25</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,5 +1,5 @@
 ﻿@page
-@model Shoppur.Pages.Admin.Orders.EditModel
+@model Sjop.Pages.Admin.Orders.EditModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -17,7 +17,7 @@
             <div class="form-group">
                 <label asp-for="Order.Status" class="control-label"></label>
                 <select asp-for="Order.Status" class="form-control">
-                    @foreach (Shoppur.Models.Order.OrderStatus status in Enum.GetValues(typeof(Shoppur.Models.Order.OrderStatus))) {
+                    @foreach (Sjop.Models.Order.OrderStatus status in Enum.GetValues(typeof(Sjop.Models.Order.OrderStatus))) {
                         <option value="@((int)status)">@status</option>
                     }
                 </select>

@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Shoppur.Data;
-using Shoppur.Models;
+using Sjop.Data;
+using Sjop.Models;
 
-namespace Shoppur.Pages.Admin.Orders
+namespace Sjop.Pages.Admin.Orders
 {
     public class DeleteModel : PageModel
     {
-        private readonly Shoppur.Data.ApplicationDbContext _context;
+        private readonly Sjop.Data.ApplicationDbContext _context;
 
-        public DeleteModel(Shoppur.Data.ApplicationDbContext context)
+        public DeleteModel(Sjop.Data.ApplicationDbContext context)
         {
             _context = context;
         }

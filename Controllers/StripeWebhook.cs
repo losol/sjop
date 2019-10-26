@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Shoppur.Config;
-using Shoppur.Data;
+using Sjop.Config;
+using Sjop.Data;
 using Stripe;
 using Stripe.Checkout;
 
-namespace Shoppur.Controllers
+namespace Sjop.Controllers
 {
 	[ApiController]
 	[Route("webhooks/stripe")]

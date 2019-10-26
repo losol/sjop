@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Shoppur.Data;
-using Shoppur.Models;
+using Sjop.Data;
+using Sjop.Models;
 
-namespace Shoppur.Pages.Admin.Products
+namespace Sjop.Pages.Admin.Products
 {
     public class CreateModel : PageModel
     {
-        private readonly Shoppur.Data.ApplicationDbContext _context;
+        private readonly Sjop.Data.ApplicationDbContext _context;
 
-        public CreateModel(Shoppur.Data.ApplicationDbContext context)
+        public CreateModel(Sjop.Data.ApplicationDbContext context)
         {
             _context = context;
         }

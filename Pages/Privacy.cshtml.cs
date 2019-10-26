@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace Shoppur.Pages
+namespace Sjop.Pages
 {
     public class PrivacyModel : PageModel
     {

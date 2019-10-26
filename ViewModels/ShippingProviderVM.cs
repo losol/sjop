@@ -1,4 +1,4 @@
-namespace Shoppur.ViewModels
+namespace Sjop.ViewModels
 {
 	public class ShippingProviderVM
 	{

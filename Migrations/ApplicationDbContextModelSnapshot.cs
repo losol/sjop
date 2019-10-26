@@ -3,9 +3,9 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Shoppur.Data;
+using Sjop.Data;
 
-namespace Shoppur.Migrations
+namespace Sjop.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -148,7 +148,7 @@ namespace Shoppur.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Shoppur.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Sjop.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
@@ -215,7 +215,7 @@ namespace Shoppur.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("Shoppur.Models.CartItem", b =>
+            modelBuilder.Entity("Sjop.Models.CartItem", b =>
                 {
                     b.Property<Guid>("CartItemId")
                         .ValueGeneratedOnAdd()
@@ -240,7 +240,7 @@ namespace Shoppur.Migrations
                     b.ToTable("CartItems");
                 });
 
-            modelBuilder.Entity("Shoppur.Models.Order", b =>
+            modelBuilder.Entity("Sjop.Models.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -269,7 +269,7 @@ namespace Shoppur.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("Shoppur.Models.OrderLine", b =>
+            modelBuilder.Entity("Sjop.Models.OrderLine", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -311,7 +311,7 @@ namespace Shoppur.Migrations
                     b.ToTable("OrderLines");
                 });
 
-            modelBuilder.Entity("Shoppur.Models.Product", b =>
+            modelBuilder.Entity("Sjop.Models.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -345,7 +345,7 @@ namespace Shoppur.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Shoppur.Models.ApplicationUser", null)
+                    b.HasOne("Sjop.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -354,7 +354,7 @@ namespace Shoppur.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Shoppur.Models.ApplicationUser", null)
+                    b.HasOne("Sjop.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -369,7 +369,7 @@ namespace Shoppur.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Shoppur.Models.ApplicationUser", null)
+                    b.HasOne("Sjop.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -378,25 +378,25 @@ namespace Shoppur.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Shoppur.Models.ApplicationUser", null)
+                    b.HasOne("Sjop.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Shoppur.Models.CartItem", b =>
+            modelBuilder.Entity("Sjop.Models.CartItem", b =>
                 {
-                    b.HasOne("Shoppur.Models.Product", "Product")
+                    b.HasOne("Sjop.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Shoppur.Models.Order", b =>
+            modelBuilder.Entity("Sjop.Models.Order", b =>
                 {
-                    b.OwnsOne("Shoppur.Models.Order+CustomerInfo", "Customer", b1 =>
+                    b.OwnsOne("Sjop.Models.Order+CustomerInfo", "Customer", b1 =>
                         {
                             b1.Property<int>("OrderId")
                                 .HasColumnType("INTEGER");
@@ -418,7 +418,7 @@ namespace Shoppur.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");
 
-                            b1.OwnsOne("Shoppur.Models.Order+StreetAddress", "ShippingAddress", b2 =>
+                            b1.OwnsOne("Sjop.Models.Order+StreetAddress", "ShippingAddress", b2 =>
                                 {
                                     b2.Property<int>("CustomerInfoOrderId")
                                         .HasColumnType("INTEGER");
@@ -451,15 +451,15 @@ namespace Shoppur.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Shoppur.Models.OrderLine", b =>
+            modelBuilder.Entity("Sjop.Models.OrderLine", b =>
                 {
-                    b.HasOne("Shoppur.Models.Order", "Order")
+                    b.HasOne("Sjop.Models.Order", "Order")
                         .WithMany("OrderLines")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Shoppur.Models.Product", "Product")
+                    b.HasOne("Sjop.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId");
                 });

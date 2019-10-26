@@ -4,10 +4,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Shoppur.Data;
+using Sjop.Data;
 using System;
 
-namespace Shoppur
+namespace Sjop
 {
     public class Program
     {

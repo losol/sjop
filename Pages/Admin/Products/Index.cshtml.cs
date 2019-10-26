@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Shoppur.Data;
-using Shoppur.Models;
+using Sjop.Data;
+using Sjop.Models;
 
-namespace Shoppur.Pages.Admin.Products
+namespace Sjop.Pages.Admin.Products
 {
     public class IndexModel : PageModel
     {
-        private readonly Shoppur.Data.ApplicationDbContext _context;
+        private readonly Sjop.Data.ApplicationDbContext _context;
 
-        public IndexModel(Shoppur.Data.ApplicationDbContext context)
+        public IndexModel(Sjop.Data.ApplicationDbContext context)
         {
             _context = context;
         }

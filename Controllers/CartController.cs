@@ -7,16 +7,16 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Shoppur.Data;
-using Shoppur.Models;
-using Shoppur.Utilities;
-using Shoppur.ViewModels;
-using static Shoppur.Models.Order;
-using static Shoppur.ViewModels.CartVM;
+using Sjop.Data;
+using Sjop.Models;
+using Sjop.Utilities;
+using Sjop.ViewModels;
+using static Sjop.Models.Order;
+using static Sjop.ViewModels.CartVM;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace Shoppur.Controllers
+namespace Sjop.Controllers
 {
 	[Route("api/v1/cart")]
 	[ApiController]

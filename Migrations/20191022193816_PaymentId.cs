@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Shoppur.Migrations
+namespace Sjop.Migrations
 {
     public partial class PaymentId : Migration
     {

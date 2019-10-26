@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Shoppur.Models;
-using static Shoppur.Models.Order;
+using Sjop.Models;
+using static Sjop.Models.Order;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace Shoppur.ViewModels
+namespace Sjop.ViewModels
 {
 	public class CartVM
 	{

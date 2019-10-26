@@ -6,16 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Shoppur.Data;
-using Shoppur.Models;
+using Sjop.Data;
+using Sjop.Models;
 
-namespace Shoppur.Pages.Admin.Orders
+namespace Sjop.Pages.Admin.Orders
 {
 	public class EditModel : PageModel
 	{
-		private readonly Shoppur.Data.ApplicationDbContext _context;
+		private readonly Sjop.Data.ApplicationDbContext _context;
 
-		public EditModel(Shoppur.Data.ApplicationDbContext context)
+		public EditModel(Sjop.Data.ApplicationDbContext context)
 		{
 			_context = context;
 		}

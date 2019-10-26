@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Shoppur.Data;
-using Shoppur.Models;
+using Sjop.Data;
+using Sjop.Models;
 
-namespace Shoppur.Pages.Admin.Orders
+namespace Sjop.Pages.Admin.Orders
 {
     public class DetailsModel : PageModel
     {
-        private readonly Shoppur.Data.ApplicationDbContext _context;
+        private readonly Sjop.Data.ApplicationDbContext _context;
 
-        public DetailsModel(Shoppur.Data.ApplicationDbContext context)
+        public DetailsModel(Sjop.Data.ApplicationDbContext context)
         {
             _context = context;
         }

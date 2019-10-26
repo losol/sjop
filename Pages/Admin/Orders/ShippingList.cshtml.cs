@@ -5,17 +5,17 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Shoppur.Data;
-using Shoppur.Models;
-using static Shoppur.Models.Order;
+using Sjop.Data;
+using Sjop.Models;
+using static Sjop.Models.Order;
 
-namespace Shoppur.Pages.Admin.Orders
+namespace Sjop.Pages.Admin.Orders
 {
     public class ShippingListModel : PageModel
     {
-        private readonly Shoppur.Data.ApplicationDbContext _context;
+        private readonly Sjop.Data.ApplicationDbContext _context;
 
-        public ShippingListModel(Shoppur.Data.ApplicationDbContext context)
+        public ShippingListModel(Sjop.Data.ApplicationDbContext context)
         {
             _context = context;
         }
