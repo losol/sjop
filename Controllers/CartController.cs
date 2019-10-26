@@ -32,21 +32,21 @@ namespace Shoppur.Controllers
 
 
 		// GET: api/cart
-		[HttpGet]
-		public async Task<CartVM> GetCart()
+		[HttpGet] 
+		public ActionResult<CartVM> GetCart()
 		{
 			_logger.LogInformation("*** Cart request ***");
 
 			CartVM cart =
 				HttpContext.Session.Get<CartVM>("_Cart") ??
 				SaveNewCartToSession();
-
+ 
 			return cart;
 		}
 
 		// DELETE: api/cart
 		[HttpDelete]
-		public async Task<CartVM> DeleteCart()
+		public ActionResult<CartVM> DeleteCart()
 		{
 			_logger.LogInformation("*** Delete cart request ***");
 
@@ -168,7 +168,7 @@ namespace Shoppur.Controllers
 		// POST: api/cart/customer
 		[HttpPost]
 		[Route("customer")]
-		public async Task<ActionResult<CartVM>> UpdateCustomer([FromBody]CartCustomerInfo customer)
+		public ActionResult<CartVM> UpdateCustomer([FromBody]CartCustomerInfo customer)
 		{
 			_logger.LogInformation("*** Add customer to cart ***");
 			if (customer == null)
@@ -206,7 +206,7 @@ namespace Shoppur.Controllers
 		// POST: api/cart/shippingprovider
 		[HttpPost]
 		[Route("shippingprovider")]
-		public async Task<ActionResult<CartVM>> UpdateShippingProvider([FromBody]ShippingProviderVM shippingProvider)
+		public ActionResult<CartVM> UpdateShippingProvider([FromBody]ShippingProviderVM shippingProvider)
 		{
 			_logger.LogInformation($"*** Update paymentprovider in cart to {shippingProvider.ShippingMethod} ***");
 
@@ -268,17 +268,22 @@ namespace Shoppur.Controllers
 			_logger.LogInformation("*** Submitting cart as order ***");
 			var cart = HttpContext.Session.Get<CartVM>("_Cart");
 
-			var newCustomer = new CustomerInfo()
+            if (cart.Customer == null) {
+                return BadRequest();
+            }
+
+            var shippingAddress = new StreetAddress {
+                Address = cart.Customer.Address,
+                Zip = cart.Customer.Zip,
+                City = cart.Customer.City,
+                Country = cart.Customer.Country
+            };
+
+			var newCustomer = new CustomerInfo
 			{
 				Name = cart.Customer.Name,
 				Email = cart.Customer.Email,
-				ShippingAddress = new StreetAddress()
-				{
-					Address = cart.Customer.Address,
-					Zip = cart.Customer.Zip,
-					City = cart.Customer.City,
-					Country = cart.Customer.Country
-				}
+				ShippingAddress = shippingAddress
 			};
 
 			var newOrder = new Order()
@@ -302,17 +307,20 @@ namespace Shoppur.Controllers
 					Price = product.Price,
 					VatPercent = product.VatPercent
 				};
+
 				newOrder.OrderLines.Add(line);
 			}
 
 			// Add shipping
-			var shippingline = new OrderLine()
-			{
-				ProductName = "Frakt",
-				OrderId = newOrder.Id,
-				Price = cart.ShippingCost.ShippingCost
-			};
-			newOrder.OrderLines.Add(shippingline);
+            if (cart.ShippingMethod == ShippingType.Mail) {
+                var shippingline = new OrderLine()
+                    {
+                        ProductName = "Frakt",
+                        OrderId = newOrder.Id,
+                        Price = cart.ShippingCost.ShippingCost
+                    };
+                    newOrder.OrderLines.Add(shippingline);
+            }
 
 			_context.Orders.Update(newOrder);
 			await _context.SaveChangesAsync();

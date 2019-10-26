@@ -43,10 +43,15 @@ namespace Shoppur.Pages.Admin.Orders
 		// more details see https://aka.ms/RazorPagesCRUD.
 		public async Task<IActionResult> OnPostAsync()
 		{
-			var order = await _context.Orders.Where(i => i.Id == Order.Id).FirstOrDefaultAsync();
-			order.Status = Order.Status;
-			order.Log = Order.Log;
-			_context.Update(order);
+			var dbOrder = await _context.Orders.Where(i => i.Id == Order.Id).FirstOrDefaultAsync();
+
+            if (dbOrder.Status != Order.Status) {
+                dbOrder.Status = Order.Status;
+                dbOrder.AddLog();
+            }
+			dbOrder.Status = Order.Status;
+			dbOrder.Log = Order.Log;
+			_context.Update(dbOrder);
 			await _context.SaveChangesAsync();
 
 			return RedirectToPage("./Index");

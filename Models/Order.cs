@@ -59,12 +59,9 @@ namespace Shoppur.Models
 		{
 			public string Address { get; set; }
 			public string Address2 { get; set; }
-			[Required]
 			public string Zip { get; set; }
-			[Required]
 			public string City { get; set; }
-			[Required]
-			public string Country { get; set; } = "Norge";
+			public string Country { get; set; }
 		}
 
 		public enum ShippingStatus
@@ -92,14 +89,14 @@ namespace Shoppur.Models
 
 		public void AddLog(string text = null)
 		{
-			var logText = $"{DateTime.UtcNow.ToString("u")}: ";
+			var logText = $"[{DateTime.UtcNow.ToString("u")}]: ";
 			if (!string.IsNullOrWhiteSpace(text))
 			{
 				logText += $"{text}";
 			}
 			else
 			{
-				logText += $"{Status}";
+				logText += $"[Status: {Status}]";
 			}
 			Log += logText + "\n";
 		}

@@ -20,8 +20,8 @@ namespace Shoppur.ViewModels
 
 		public string CartId { get; set; }
 		public CartCustomerInfo Customer { get; set; }
-		public PaymentProviderType PaymentProvider { get; set; } = PaymentProviderType.StripeCheckout;
-		public ShippingType ShippingMethod { get; set; }
+		public PaymentProviderType PaymentProvider { get; set; } = PaymentProviderType.StripeElements;
+		public ShippingType ShippingMethod { get; set; } = ShippingType.Mail;
 		public ShippingDetails ShippingCost { get; set; }
 		public decimal CartTotal => CartItems.Sum(o => o.Product.TotalPrice * o.Quantity) + ShippingCost.TotalShippingCost;
 

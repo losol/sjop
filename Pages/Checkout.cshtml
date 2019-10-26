@@ -228,12 +228,18 @@
   // Initialize and add eventlisteners for form
   // ******************************************
 
+    async function InitializeCheckout() {
+        await setShippingMethod();
+        await setPaymentProvider();
+    }
+    InitializeCheckout();
   // Shipping Methods
-  setShippingMethod();
+ 
   var shippingRadios = Array.from(document.getElementsByClassName("shippingmethod-input"));
   shippingRadios.forEach (element =>
     element.addEventListener('click', function (event) {
       setShippingMethod();
+      setPaymentProvider();
     })
   );
 
@@ -253,7 +259,6 @@
   }
 
   // Payment Provider
-  setPaymentProvider();
   var paymentRadios = Array.from(document.getElementsByClassName("paymentprovider-input"));
   paymentRadios.forEach (element =>
     element.addEventListener('click', function (event) {
@@ -437,9 +442,8 @@
   });
 
 
-  function PlaceOrderAndPay() {
-    alert('hr');
-    SaveCustomerInfoToCart();
+  async function PlaceOrderAndPay() {
+    await SaveCustomerInfoToCart();
     fetch('api/v1/cart/submit-order', {
       method: "post"
       })
@@ -461,6 +465,7 @@
 
     // Handle payment
     .then(function(payment) {
+        console.log(payment);
       if (selectedProvider == "StripeElements") {
           stripe.handleCardPayment(
             payment.client_secret, card, {

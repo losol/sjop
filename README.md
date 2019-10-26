@@ -11,3 +11,9 @@ dotnet user-secrets set "StripeSettings:WebhookSecret" "whsec_asdf"
 ```
 stripe listen --forward-to localhost:5000/webhooks/stripe
 ```
+
+
+Set up ngrok to test webhooks. 
+``` 
+Win: ..\ngrok http 5000
+```

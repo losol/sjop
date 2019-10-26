@@ -10,6 +10,5 @@ namespace Shoppur.ViewModels
 	public class PayOrder
 	{
 		public int OrderId { get; set; }
-		public string PaymentToken { get; set; }
 	}
 }

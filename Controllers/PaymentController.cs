@@ -37,10 +37,14 @@ namespace Shoppur.Controllers
 		{
 			_logger.LogInformation($"*** Paying order: {payOrder.OrderId}.");
 
-			var order = _context.Orders
+			var order = await _context.Orders
 				.Where(p => p.Id == payOrder.OrderId)
 				.Include(order => order.OrderLines)
-				.FirstOrDefault();
+				.FirstOrDefaultAsync();
+
+            if (order == null) {
+                return BadRequest("No order found");
+            }
 
 			switch (order.PaymentProvider)
 			{
@@ -50,7 +54,7 @@ namespace Shoppur.Controllers
 
 				case PaymentProviderType.StripeElements:
 					_logger.LogInformation($"* Pay with StripeElements");
-					return await PayWithStripeElements(order, payOrder.PaymentToken);
+					return await PayWithStripeElements(order);
 
 				case PaymentProviderType.StripeBilling:
 					_logger.LogInformation($"* Pay with StripeBilling");
@@ -108,7 +112,7 @@ namespace Shoppur.Controllers
 			return Ok(session);
 		}
 
-		private async Task<ActionResult> PayWithStripeElements(Shoppur.Models.Order order, string cardToken)
+		private async Task<ActionResult> PayWithStripeElements(Shoppur.Models.Order order)
 		{
 			// Read Stripe API key from config
 			StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
