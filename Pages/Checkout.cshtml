@@ -452,21 +452,31 @@
   async function PlaceOrderAndPay() {
     spinSubmitButton();
     await SaveCustomerInfoToCart();
-    fetch('api/v1/cart/submit-order', {
-      method: "post"
-      })
-    .then((response) => response.json())
-    .then(function(response) {
-         if (!response.ok) {
-             var err = new Error("HTTP status code: " + response.status);
-             console.log(err);
-             window.location = '/PaymentFailed';
-         }
-         return response;
-    })
 
-    // Get payment info
+    // Submit order
+    fetch('api/v1/cart/submit-order', {
+      method: "post",
+      headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: null
+      })
+    .then(function(response) {
+        if (!response.ok) {
+            var err = new Error("HTTP status code: " + response.status + "");
+            console.log(err);
+            window.location = '/PaymentFailed';
+        }
+        return response;
+    })
+    .then((response) => response.json())
+    
+    
+
+    // Get payment info when order is processed in backend
     .then(function(order) {
+      console.log("Starting payment for order: " + order.id);
       var orderobject = { OrderId: order.id };
       return fetch('api/v1/payment', {
         method: "post",
@@ -477,6 +487,14 @@
         body: JSON.stringify(orderobject)
       })
     
+    })
+    .then(function(response) {
+         if (!response.ok) {
+             var err = new Error("HTTP status code: " + response.status);
+             console.log(err);
+             window.location = '/PaymentFailed';
+         }
+         return response;
     })
     .then(response => response.json())
 
@@ -516,6 +534,7 @@
 
           .catch(function(error) {
             console.log(error);
+            window.location = '/PaymentFailed';
           });
   }
 
@@ -530,6 +549,13 @@
       },
       body: formjson
     })
+    .then(function(response) {
+         if (!response.ok) {
+             var err = new Error("HTTP status code: " + response.status);
+             console.log(err);
+         }
+         return response;
+    });
   }
 
   // Empty cart functionality

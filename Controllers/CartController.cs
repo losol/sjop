@@ -269,7 +269,7 @@ namespace Shoppur.Controllers
 			var cart = HttpContext.Session.Get<CartVM>("_Cart");
 
             if (cart.Customer == null) {
-                return BadRequest();
+                return BadRequest("No customer in cart");
             }
 
             var shippingAddress = new StreetAddress {
@@ -327,7 +327,7 @@ namespace Shoppur.Controllers
 
 			_logger.LogInformation($"*** Added order with id: {newOrder.Id} ***");
 
-			return newOrder;
+			return Ok(newOrder);
 		}
 
 		// GET: api/cart/item/5

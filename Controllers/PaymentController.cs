@@ -116,13 +116,13 @@ namespace Shoppur.Controllers
 		{
 			// Read Stripe API key from config
 			StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
-
-			var service = new PaymentIntentService();
+			
 			var paymentIntentCreateOptions = new PaymentIntentCreateOptions
 			{
 				Customer = StripeCustomer(order).Id,
 				Amount = Convert.ToInt32(order.OrderTotalprice * 100),
 				Currency = "nok",
+                PaymentMethodTypes = new List<string> { "card" },
 				Description = "Bestilling fra Losvik kommune",
 				ReceiptEmail = order.Customer.Email,
 				StatementDescriptor = "Losvik kommune",
@@ -132,6 +132,7 @@ namespace Shoppur.Controllers
 				}
 			};
 
+            var service = new PaymentIntentService();
 			var intent = service.Create(paymentIntentCreateOptions);
 
 			return Ok(intent);
