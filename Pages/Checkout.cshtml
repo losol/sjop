@@ -425,8 +425,9 @@
     var form = document.getElementById("order-form");
     form.addEventListener(
       "submit",
-      function(event) {
+      async function(event) {
         event.preventDefault();
+        await SaveCustomerToCart();
         if (form.checkValidity() === false) {
           event.stopPropagation();
         } else {
@@ -449,9 +450,8 @@
 
 
 
-  async function PlaceOrderAndPay() {
+  function PlaceOrderAndPay() {
     spinSubmitButton();
-    await SaveCustomerInfoToCart();
 
     // Submit order
     fetch('api/v1/cart/submit-order', {
@@ -538,9 +538,11 @@
           });
   }
 
-  function SaveCustomerInfoToCart() {
+  function SaveCustomerToCart() {
+      // Save customer information to cart
     var form = document.getElementById("order-form");
     var formjson = toJSONString(form);
+
     fetch('/api/v1/cart/customer', {
       method: "post",
       headers: {
@@ -555,9 +557,8 @@
              console.log(err);
          }
          return response;
-    });
+    })
   }
-
   // Empty cart functionality
   var emptycartbutton = document.getElementById("empty-cart");
   emptycartbutton.addEventListener("click", function(event) {
