@@ -24,7 +24,7 @@ namespace Sjop.Models
 		public ShippingStatus Shipping { get; set; } = ShippingStatus.Draft;
 		public ShippingType ShippingMethod { get; set; } = ShippingType.Mail;
 
-		public decimal OrderTotalprice => OrderLines.Sum(w => w.TotalPrice);
+		public decimal OrderTotalprice => OrderLines.Sum(w => w.TotalPrice * w.Quantity);
 
 		public string Log { get; set; }
 
