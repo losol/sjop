@@ -36,7 +36,7 @@
                 @item.Customer.ShippingAddress.Address <br />
                 @item.Customer.ShippingAddress.Zip @item.Customer.ShippingAddress.City
                 <br><br>    
-                Skal ha
+                Frakt: @item.ShippingMethod
                 <ul>
                 @foreach (var ol in item.OrderLines) {
                    <li>@ol.Quantity <span>x </span>@ol.ProductName</li>
@@ -44,9 +44,8 @@
                 </ul>
             </td>
             <td>
-
-                @item.Customer.Email <br />
-                Sende som: @item.ShippingMethod
+                OrdreId: @item.Id <br />
+                E-post: @item.Customer.Email <br />
                 <br />
                 <br />
                 Ordrestatus: @Html.DisplayFor(modelItem => item.Status) <br />
