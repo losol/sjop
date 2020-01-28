@@ -4,123 +4,88 @@
 @{
     ViewData["Title"] = "Losvik-kalenderen 2020";
     ViewData["Description"] = "Bestill kalenderen i dag.";
+
+    var OrdersByMonth = Model.Orders
+        .GroupBy(e => new { e.DateCreated.Year, e.DateCreated.Month });
+    
+    var PaidOrdersByMonth = Model.PaidOrders
+        .GroupBy(e => new { e.DateCreated.Year, e.DateCreated.Month });
+    
 }
 
 <h1 class="display-2 pt-5">Ordrer</h1>
 
-<h2 class="pt-5">Betalte ordre</h2> 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Ordre
-            </th>
-            <th>
-                Infno
-            </th>
-            <th>
-                Pakkestatus
-            </th>
-            <th>
-                Logg
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.PaidOrders) {
-        <tr>
-            <td>
-
-                <b>@item.Customer.Name</b> <br />
-                @item.Customer.ShippingAddress.Address <br />
-                @item.Customer.ShippingAddress.Zip @item.Customer.ShippingAddress.City
-                <br><br>    
-                Frakt: @item.ShippingMethod
-                <ul>
-                @foreach (var ol in item.OrderLines) {
-                   <li>@ol.Quantity <span>x </span>@ol.ProductName</li>
-                }
-                </ul>
-            </td>
-            <td>
-                OrdreId: @item.Id <br />
-                Dato: @item.DateCreated <br />
-                E-post: @item.Customer.Email <br />
-                <br />
-                <br />
-                Ordrestatus: @Html.DisplayFor(modelItem => item.Status) <br />
-                Sendestatus: @Html.DisplayFor(modelItem => item.Shipping)
-                
-            </td>
-            <td>
-                <span title="@Html.DisplayFor(modelItem => item.Log)">Logg</span>
-                
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> 
-            </td>
-        </tr>
+<h2 class="pt-5">Sammendrag</h2>
+@foreach (var month in PaidOrdersByMonth) {
+    <div class="card border-success my-3">
+        <div class="card-body">
+            <h5 class="card-title">M&aring;nedsrapport @month.Key.Year - @month.Key.Month.ToString("D2")</h5>
+            <table class="table table-borderless table-hover table-sm">
+                <tr>
+                    <td>Totalt salg (eks. mva):</td>
+                    <td>@month.Sum(w=> w.OrderTotalExcludingTax).ToString("C2")</td>
+                </tr>
+                <tr>
+                    <td>Totalt mva:</td>
+                    <td>@month.Sum(w=> w.OrderTotalTax).ToString("C2")</td>
+                </tr>
+                <tr class="border-top">
+                    <td>Total salg:</td>
+                    <td>@month.Sum(w=> w.OrderTotalprice).ToString("C2")</td>
+                </tr>                 
+            </table>
+        </div>
+    </div>
 }
-    </tbody>
-</table>
+
+@foreach (var month in OrdersByMonth) {
+    <h2 class="pt-5">Ordrer i @month.Key.Year - @month.Key.Month.ToString("D2")</h2>
+    <hr>
+
+    @foreach (var order in month) {
 
 
-<h2 class="pt-5">Andre ordre</h2> 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Ordre
-            </th>
-            <th>
-                Infno
-            </th>
-            <th>
-                Pakkestatus
-            </th>
-            <th>
-                Logg
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.OtherOrders) {
-        <tr>
-            <td>
+        <div class="card my-2">
+            <div class="row no-gutters">
+                <div class="col-4 p-3">
+                    @order.Id
+                    <b>@order.Customer.Name</b> <br />
+                    @order.Customer.ShippingAddress.Address <br />
+                    @order.Customer.ShippingAddress.Zip @order.Customer.ShippingAddress.City
+                    <br><br>    
+                    Frakt: @order.ShippingMethod <br />
+                    Ordrestatus: @Html.DisplayFor(modelItem => order.Status) 
+                </div>
+                <div class="col-8 p-3">
+                    <table class="table table-borderless table-hover table-sm">
+                        <thead>
+                            <tr>
+                                <th scope="col">Produktnavn</th>
+                                <th scope="col">Pris eks mva</th>
+                                <th scope="col">Mva</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
-                <b>@item.Customer.Name</b> <br />
-                @item.Customer.ShippingAddress.Address <br />
-                @item.Customer.ShippingAddress.Zip @item.Customer.ShippingAddress.City
-                <br><br>    
-                Skal ha
-                <ul>
-                @foreach (var ol in item.OrderLines) {
-                   <li>@ol.Quantity <span>x </span>@ol.ProductName</li>
-                }
-                </ul>
-            </td>
-            <td>
-
-                @item.Customer.Email <br />
-                Sende som: @item.ShippingMethod
-                <br />
-                <br />
-                Ordrestatus: @Html.DisplayFor(modelItem => item.Status) <br />
-                Sendestatus: @Html.DisplayFor(modelItem => item.Shipping)
-                
-            </td>
-            <td>
-                <span title="@Html.DisplayFor(modelItem => item.Log)">Logg</span>
-                
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> 
-            </td>
-        </tr>
+                        @foreach (var ol in order.OrderLines) {
+                            <tr>
+                                <td><span class="ol-quantity">@ol.Quantity</span>x @ol.ProductName</td>
+                                <td>@ol.Price.ToString("C2")</td>
+                                <td>@(ol.VatPercent)%</td>
+                                <td>@ol.LineTotalPrice.ToString("C2")</td>
+                            </tr>
+                        }
+                            <tr class="border-top">
+                                <th scope="row">Totalt</th>
+                                <td>@order.OrderTotalExcludingTax.ToString("C2")</td>
+                                <td>@order.OrderTotalTax.ToString("C2")</td>
+                                <td>@order.OrderTotalprice.ToString("C2")</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
 }
-    </tbody>
-</table>
