@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sjop", "src\Sjop\Sjop.cspro
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{CC50228C-87CA-44DC-A124-0CB35C7AD7B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sjop.tests", "tests\sjop.tests\sjop.tests.csproj", "{1EE994D8-3CB6-493C-A090-82B6559D0CB3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sjop.tests", "tests\Sjop.Tests\Sjop.Tests.csproj", "{1EE994D8-3CB6-493C-A090-82B6559D0CB3}"
 EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
