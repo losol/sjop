@@ -2,7 +2,7 @@
 
 # Sjop
 
-Sjop is an ecommerce solution written in ASP.NET Core 3.0. 
+Sjop is an ecommerce solution written in ASP.NET Core 3.1. 
 
 
 ## Setting up Payment providers. 
