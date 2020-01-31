@@ -25,7 +25,9 @@ namespace Sjop.Models
         public ShippingType ShippingMethod { get; set; } = ShippingType.Mail;
         public DateTime DateCreated { get; set; } = DateTime.Now;
 
-        public decimal OrderTotalprice => OrderLines.Sum(w => w.TotalPrice * w.Quantity);
+		public decimal OrderTotalExcludingTax => OrderLines.Sum(w => w.Price * w.Quantity);
+		public decimal OrderTotalTax => OrderLines.Sum(w => w.VatPercent * w.Quantity * w.Price * 0.01m);
+		public decimal OrderTotalprice => OrderLines.Sum(w => w.TotalPrice * w.Quantity);
 
         public string Log { get; set; }
 

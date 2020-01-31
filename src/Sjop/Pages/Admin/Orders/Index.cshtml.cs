@@ -20,22 +20,21 @@ namespace Sjop.Pages.Admin.Orders
 			_context = context;
 		}
 
-		public IList<Order> PaidOrders { get; set; }
-        public IList<Order> OtherOrders { get; set; }
+		public IEnumerable<Order> Orders { get; set; }
+		public IEnumerable<Order> PaidOrders { get; set; }
 
 		public async Task OnGetAsync()
 		{
-			PaidOrders = await _context.Orders
-                .Where(p =>  p.Status == OrderStatus.Paid)
+			Orders = await _context.Orders
 				.Include(i => i.OrderLines)
 				.OrderByDescending(i => i.Id)
 				.ToListAsync();
 
-            OtherOrders = await _context.Orders
-                .Where(p => p.Status != OrderStatus.Paid)
+			PaidOrders = await _context.Orders
+				.Where(i => i.Status == OrderStatus.Paid)
 				.Include(i => i.OrderLines)
 				.OrderByDescending(i => i.Id)
-				.ToListAsync();   
+				.ToListAsync();
 		}
 	}
 }
