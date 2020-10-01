@@ -12,6 +12,7 @@ using Sjop.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.FeatureManagement;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Http;
@@ -35,14 +36,15 @@ namespace Sjop
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
-            var stripeSettings = new StripeSettings();
-            Configuration.Bind("StripeSettings", stripeSettings);
-            services.AddSingleton<StripeSettings>(stripeSettings);
 
-            var siteSettings = new SiteSettings();
-            Configuration.Bind("SiteSettings", siteSettings);
-            services.AddSingleton<SiteSettings>(siteSettings);
+            var stripeSettings = new Config.StripeSettings();
+            Configuration.Bind("StripeSettings", stripeSettings);
+            services.AddSingleton(stripeSettings);
+
+            var site = new Site();
+            Configuration.Bind("Site", site);
+            services.AddSingleton<Site>(site)
+                .AddFeatureManagement();
 
             // Configure cookie policy
             services.Configure<CookiePolicyOptions>(options =>
@@ -80,7 +82,7 @@ namespace Sjop
                 // User settings.
                 options.User.AllowedUserNameCharacters =
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-                options.User.RequireUniqueEmail = false;
+                options.User.RequireUniqueEmail = true;
             });
 
             services.AddSwaggerGen(c =>
@@ -134,7 +136,7 @@ namespace Sjop
             app.UseRouting();
 
             // Set localization settings
-            var defaultCulture = new CultureInfo("nb-NO");
+            var defaultCulture = new CultureInfo(Configuration["Site:DefaultLocale"]);
             var localizationOptions = new RequestLocalizationOptions
             {
                 DefaultRequestCulture = new RequestCulture(defaultCulture),
