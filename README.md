@@ -7,12 +7,25 @@ Sjop is an ecommerce solution written in ASP.NET Core 3.1.
 
 ## Setting up Payment providers. 
 
+
+### Stripe
 After [getting an Stripe account](https://dashboard.stripe.com/register) you should save your API keys so that the app could reach it. The best way is by using `dotnet user-secrets`, which will override the settings in `appsettings.json`. 
 
 ```
-dotnet user-secrets set "StripeSettings:SecretKey" "sk_test_asdfasdf"
-dotnet user-secrets set "StripeSettings:PublishableKey" "pk_test_asdfasdf"
-dotnet user-secrets set "StripeSettings:WebhookSecret" "whsec_asdf"
+dotnet user-secrets set "Stripe:SecretKey" "sk_test_asdfasdf"
+dotnet user-secrets set "Stripe:PublishableKey" "pk_test_asdfasdf"
+dotnet user-secrets set "Stripe:WebhookSecret" "whsec_asdf"
+```
+
+### Vipps
+For norwegian webshops Vipps payments is supported. 
+
+```
+dotnet user-secrets set "Vipps:MerchantSerialNumber" "YOUR_INFO"
+dotnet user-secrets set "Vipps:ClientId" "YOUR_INFO"
+dotnet user-secrets set "Vipps:ClientSecret" "YOUR_INFO"
+dotnet user-secrets set "Vipps:SubscriptionKey" "YOUR_INFO"
+
 ```
 
 ## Test webhooks

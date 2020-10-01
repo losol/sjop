@@ -38,13 +38,20 @@ namespace Sjop
         {
 
             var stripeSettings = new Config.StripeSettings();
-            Configuration.Bind("StripeSettings", stripeSettings);
+            Configuration.Bind("Stripe", stripeSettings);
             services.AddSingleton(stripeSettings);
+
+            var vippsSettings = new Config.VippsSettings();
+            Configuration.Bind("Vipps", vippsSettings);
+            services.AddSingleton(vippsSettings);
 
             var site = new Site();
             Configuration.Bind("Site", site);
             services.AddSingleton<Site>(site)
                 .AddFeatureManagement();
+
+
+            services.AddHttpClient();
 
             // Configure cookie policy
             services.Configure<CookiePolicyOptions>(options =>
