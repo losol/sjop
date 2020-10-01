@@ -26,18 +26,7 @@ module.exports = {
                 test: /\.(scss)$/,
                 use: [{
                     loader: 'style-loader', // inject CSS to page
-                },
-                {
-                    loader: MiniCssExtractPlugin.loader,
-                    options: {
-                        // you can specify a publicPath here
-                        // by default it uses publicPath in webpackOptions.output
-                        publicPath: '../',
-                        hmr: process.env.NODE_ENV === 'development',
-                    },
-                },
-
-                {
+                }, {
                     loader: 'css-loader', // translates CSS into CommonJS modules
                 }, {
                     loader: 'postcss-loader', // Run postcss actions
@@ -50,9 +39,7 @@ module.exports = {
                     }
                 }, {
                     loader: 'sass-loader' // compiles Sass to CSS
-                },
-                ],
-
+                }]
             },
         ]
     }
