@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Sjop.Config;
 using Sjop.Data;
+using Sjop.Models;
 using Sjop.Services.Vipps;
 using Sjop.ViewModels;
 
@@ -39,6 +40,26 @@ namespace Sjop.Controllers
         public async Task<ActionResult> PayWithVipps()
         {
             _logger.LogInformation($"*** Pay with Vipps, client id: {_vippsSettings.ClientId} ***");
+
+            Order order = new Order()
+            {
+                Customer = new Order.CustomerInfo
+                {
+                    Email = "skoddlosen@gmail.com",
+                    Name = "Dis og tåke-mannen"
+                },
+                PaymentProvider = Order.PaymentProviderType.Vipps
+            };
+
+            order.OrderLines.Add(new OrderLine()
+            {
+                Id = order.Id,
+                ProductName = "Losvik kommune kalender",
+                Price = 299
+            });
+
+
+            var pay = _vippsApiClient.InitiatePayment(order, _vippsSettings);
 
             return StatusCode(418, "Lag litt kaffe likevel?");
 
