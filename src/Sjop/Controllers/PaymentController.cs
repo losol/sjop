@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Sjop.Config;
 using Sjop.Data;
+using Sjop.Services.Vipps;
 using Sjop.ViewModels;
 using Stripe;
 using Stripe.Checkout;
@@ -23,13 +24,24 @@ namespace Sjop.Controllers
         private readonly ILogger _logger;
         private readonly Config.StripeSettings _stripeSettings;
         private readonly Site _site;
+        private readonly IVippsApiClient _vippsApiClient;
+        private readonly VippsSettings _vippsSettings;
 
-        public PaymentController(ApplicationDbContext context, ILogger<CartController> logger, Config.StripeSettings stripeSettings, Site siteSetttings)
+
+        public PaymentController(
+            ApplicationDbContext context, 
+            ILogger<CartController> logger, 
+            Config.StripeSettings stripeSettings, 
+            Site siteSetttings, 
+            IVippsApiClient vippsApiClient, 
+            VippsSettings vippsSettings)
         {
             _context = context;
             _logger = logger;
             _stripeSettings = stripeSettings;
             _site = siteSetttings;
+            _vippsApiClient = vippsApiClient;
+            _vippsSettings = vippsSettings;
         }
 
         [HttpPost]
@@ -57,13 +69,9 @@ namespace Sjop.Controllers
                     _logger.LogInformation($"* Pay with StripeElements");
                     return await PayWithStripeElements(order);
 
-                case PaymentProviderType.StripeBilling:
-                    _logger.LogInformation($"* Pay with StripeBilling");
-                    return await PayWithStripeCheckout(order);
-
                 case PaymentProviderType.Vipps:
                     _logger.LogInformation($"* Pay with Vipps ");
-                    return await PayWithStripeCheckout(order);
+                    return Ok(await _vippsApiClient.InitiatePayment(order, _vippsSettings));
 
                 default:
                     return BadRequest();

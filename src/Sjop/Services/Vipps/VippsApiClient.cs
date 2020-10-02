@@ -107,7 +107,7 @@ namespace Sjop.Services.Vipps
 
             var payRequest = await client.SendAsync(request);
             var payResponse = await payRequest.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<InitiatePaymentResponseOk>(payResponse);
+            var result = JsonSerializer.Deserialize<InitiatePaymentResponseOk>(payResponse, jsonOptions);
 
             return result;
         }

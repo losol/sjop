@@ -12,7 +12,7 @@
     width="72"
     height="72"
   />
-  <h2>Bestilling</h2>
+  <h1>Bestilling</h1>
   <p class="lead">
     Kurt pakker og sender så snart du har fylt ut og sendt inn.
   </p>
@@ -23,8 +23,79 @@
 
 <div class="row">
   <div class="col-md-6 mx-auto pt-5">
-    <h4 class="mb-3">Navn og adresse</h4>
+    <h4 class="mb-3">Frakt og betaling</h4>
+
+      <div class="d-block my-3">  
+        <div class="form-check form-check-inline">
+          <input
+            id="shipping-mail"
+            value="Mail"
+            name="shippingmethod"
+            type="radio"
+            class="form-check-input shippingmethod-input"
+            checked
+          />
+          <label class="form-check-label" for="shipping-mail" >Send i posten</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            id="shipping-none"
+            value="None"
+            name="shippingmethod"
+            type="radio"
+            class="form-check-input shippingmethod-input"
+          />
+          <label class="form-check-label" for="shipping-none" >Hent på Servicetorget</label>
+        </div>
+      </div>
+
+      <div class="d-block my-3">
+        <div class="form-check form-check-inline">
+          <input
+            id="paymentprovider-vipps"
+            value="Vipps"
+            name="paymentprovider"
+            type="radio"
+            class="form-check-input paymentprovider-input"
+            checked
+          />
+          <label class="form-check-label" for="paymentprovider-vipps" >Vipps</label>
+        </div>
+
+        <div class="form-check form-check-inline">
+          <input
+            id="paymentprovider-stripeelements"
+            value="StripeElements"
+            name="paymentprovider"
+            type="radio"
+            class="form-check-input paymentprovider-input"
+            
+          />
+          <label class="form-check-label" for="paymentprovider-stripeelements" >Betal med kort</label>
+        </div>
+      </div>
+
+      
+
+    
     <form class="needs-validation" id="order-form" novalidate>
+      <h4 class="mb-3 mt-5">Mobiltelefon</h4>
+      <div class="mb-3">
+        <label for="phone">Mobilnummer</label>
+        <input
+          type="text"
+          class="form-control"
+          id="phone"
+          name="phone"
+          placeholder="91231234"
+          required
+        />
+        <div class="invalid-feedback">
+          Du m&aring; oppgi mobilnummer for å betale med Vipps.
+        </div>
+      </div>
+
+      <h4 class="mb-3 mt-5">Navn og adresse</h4>
       <div class="mb-3">
         <label for="name">Navn</label>
         <input
@@ -112,45 +183,7 @@
       </div>
       <hr class="mb-4" />
 
-      <h4 class="mb-3">Frakt og betaling</h4>
-
-      <div class="d-block my-3">  
-        <div class="form-check form-check-inline">
-          <input
-            id="shipping-mail"
-            value="Mail"
-            name="shippingmethod"
-            type="radio"
-            class="form-check-input shippingmethod-input"
-            checked
-          />
-          <label class="form-check-label" for="shipping-mail" >Send i posten</label>
-        </div>
-        <div class="form-check form-check-inline">
-          <input
-            id="shipping-none"
-            value="None"
-            name="shippingmethod"
-            type="radio"
-            class="form-check-input shippingmethod-input"
-          />
-          <label class="form-check-label" for="shipping-none" >Hent i Losheim</label>
-        </div>
-      </div>
-
-      <div class="d-block my-3">  
-        <div class="form-check form-check-inline">
-          <input
-            id="paymentprovider-stripeelements"
-            value="StripeElements"
-            name="paymentprovider"
-            type="radio"
-            class="form-check-input paymentprovider-input"
-            checked
-          />
-          <label class="form-check-label" for="paymentprovider-stripeelements" >Betal med kort</label>
-        </div>
-      </div>
+      
 
       <div class="form-group">
       <label for="card-element">Kortopplysninger</label>
@@ -431,15 +464,21 @@
         if (form.checkValidity() === false) {
           event.stopPropagation();
         } else {
+          if(selectedProvider == "StripeElements") {
           stripe.createToken(card).then(function(result) {
           if (result.error) {
             var errorElement = document.getElementById('card-errors');
             errorElement.textContent = result.error.message;
           } else {
             // Send the token to your server.
-            PlaceOrderAndPay();
+            PayOrder();
           }
           });
+          };
+
+          if (selectedProvider == "Vipps") {
+            PayOrder();
+          }
         }
         form.classList.add("was-validated");
         
@@ -448,9 +487,7 @@
     );
   });
 
-
-
-  function PlaceOrderAndPay() {
+  function PayOrder() {
     spinSubmitButton();
 
     // Submit order
@@ -500,7 +537,6 @@
 
     // Handle payment
     .then(function(payment) {
-        console.log(payment);
       if (selectedProvider == "StripeElements") {
           stripe.handleCardPayment(
             payment.client_secret, card, {
@@ -522,6 +558,13 @@
         console.log(error);
         window.location = '/PaymentFailed';
       });
+      }
+
+      if (selectedProvider == "Vipps") {
+        console.log("*****VIPPS*****")
+        console.log(payment);
+
+        window.location.href = payment.url;
       }
 
       if (selectedProvider == "StripeCheckout") {
