@@ -1,4 +1,4 @@
-namespace Sjop.Config
+namespace Sjop.Services.Vipps
 {
 
     public class VippsSettings
