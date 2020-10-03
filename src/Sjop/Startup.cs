@@ -21,6 +21,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Sjop.Config;
+using Sjop.Services.Vipps;
 
 namespace Sjop
 {
@@ -38,13 +39,22 @@ namespace Sjop
         {
 
             var stripeSettings = new Config.StripeSettings();
-            Configuration.Bind("StripeSettings", stripeSettings);
+            Configuration.Bind("Stripe", stripeSettings);
             services.AddSingleton(stripeSettings);
+
+            var vippsSettings = new VippsSettings();
+            Configuration.Bind("Vipps", vippsSettings);
+            services.AddSingleton(vippsSettings);
 
             var site = new Site();
             Configuration.Bind("Site", site);
             services.AddSingleton<Site>(site)
                 .AddFeatureManagement();
+
+
+            services.AddHttpClient();
+
+            services.AddSingleton<IVippsApiClient, VippsApiClient>();
 
             // Configure cookie policy
             services.Configure<CookiePolicyOptions>(options =>

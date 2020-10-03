@@ -48,13 +48,16 @@
         <div class="card my-2">
             <div class="row no-gutters">
                 <div class="col-4 p-3">
-                    @order.Id
+                    Ordre #@order.Id<br><br>
                     <b>@order.Customer.Name</b> <br />
                     @order.Customer.ShippingAddress.Address <br />
                     @order.Customer.ShippingAddress.Zip @order.Customer.ShippingAddress.City
                     <br><br>    
                     Frakt: @order.ShippingMethod <br />
-                    Ordrestatus: @Html.DisplayFor(modelItem => order.Status) 
+                    Ordrestatus: @Html.DisplayFor(modelItem => order.Status) <br />
+                    Betaling: @order.PaymentProvider<br />
+                    <a asp-page="Details" asp-route-id="@order.Id">Detaljer</a>
+                    
                 </div>
                 <div class="col-8 p-3">
                     <table class="table table-borderless table-hover table-sm">

@@ -353,3 +353,4 @@ MigrationBackup/
 *.cache
 app.db-shm
 app.db-wal
+.DS_Store

@@ -20,14 +20,15 @@ namespace Sjop.Models
         public CustomerInfo Customer { get; set; }
         public PaymentProviderType PaymentProvider { get; set; } = PaymentProviderType.StripeElements;
         public string PaymentProviderSessionId { get; set; }
+        public string PaymentProviderToken { get; set; } = Guid.NewGuid().ToString("N");
         public OrderStatus Status { get; set; } = OrderStatus.Draft;
         public ShippingStatus Shipping { get; set; } = ShippingStatus.Draft;
         public ShippingType ShippingMethod { get; set; } = ShippingType.Mail;
         public DateTime DateCreated { get; set; } = DateTime.Now;
 
-		public decimal OrderTotalExcludingTax => OrderLines.Sum(w => w.Price * w.Quantity);
-		public decimal OrderTotalTax => OrderLines.Sum(w => w.VatPercent * w.Quantity * w.Price * 0.01m);
-		public decimal OrderTotalprice => OrderLines.Sum(w => w.TotalPrice * w.Quantity);
+        public decimal OrderTotalExcludingTax => OrderLines.Sum(w => w.Price * w.Quantity);
+        public decimal OrderTotalTax => OrderLines.Sum(w => w.VatPercent * w.Quantity * w.Price * 0.01m);
+        public decimal OrderTotalprice => OrderLines.Sum(w => w.TotalPrice * w.Quantity);
 
         public string Log { get; set; }
 
