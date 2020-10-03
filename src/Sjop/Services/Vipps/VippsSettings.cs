@@ -10,5 +10,6 @@ namespace Sjop.Services.Vipps
         public string SubscriptionKey { get; set; }
         public string CallbackBaseUrl { get; set; }
         public string RedirectUrl { get; set; }
+        public string TransactionText { get; set; }
     }
 }

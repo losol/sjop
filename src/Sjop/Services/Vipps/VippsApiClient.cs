@@ -82,7 +82,7 @@ namespace Sjop.Services.Vipps
             {
                 CustomerInfo = new CustomerInfo
                 {
-                    MobileNumber = "99433012"
+                    MobileNumber = order.Customer.Phone
                 },
                 MerchantInfo = new MerchantInfo()
                 {
@@ -95,7 +95,7 @@ namespace Sjop.Services.Vipps
                 {
                     Amount = (int)(order.OrderTotalprice * 100),
                     OrderId = order.Id.ToString(),
-                    TransactionText = "Test betaling"
+                    TransactionText = vippsSettings.TransactionText
                 }
 
             };
@@ -103,7 +103,7 @@ namespace Sjop.Services.Vipps
             request.Content = new StringContent(
                 JsonSerializer.Serialize(init, vippsJsonOptions),
                 Encoding.UTF8,
-                "application/json");
+                        "application/json");
 
             var payRequest = await client.SendAsync(request);
 
@@ -136,7 +136,7 @@ namespace Sjop.Services.Vipps
 
             var token = await GetAccessToken(vippsSettings);
             request.Headers.Add("Authorization", $"Bearer {token.AccessToken}");
-            request.Headers.Add("Merchant-Serial-Number", "210066");
+            request.Headers.Add("Merchant-Serial-Number", vippsSettings.MerchantSerialNumber);
             request.Headers.Add("Ocp-Apim-Subscription-Key", vippsSettings.SubscriptionKey);
             request.Headers.Add("X-Request-Id", requestId);
 
@@ -149,7 +149,7 @@ namespace Sjop.Services.Vipps
                 Transaction = new CapturePaymentTransaction
                 {
                     Amount = (int)(order.OrderTotalprice * 100),
-                    TransactionText = "asdf"
+                    TransactionText = vippsSettings.TransactionText
                 }
             };
 
