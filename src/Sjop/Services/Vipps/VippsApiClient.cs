@@ -26,10 +26,10 @@ namespace Sjop.Services.Vipps
         private VippsAccessTokenResponse _accessToken;
 
         private JsonSerializerOptions vippsJsonOptions = new JsonSerializerOptions()
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                IgnoreNullValues = true
-            };
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            IgnoreNullValues = true
+        };
 
         public VippsApiClient(ILogger<VippsApiClient> logger, IHttpClientFactory httpClientFactory)
         {
@@ -43,7 +43,7 @@ namespace Sjop.Services.Vipps
         {
             _logger.LogInformation("*** Request access token from Vipps");
             var client = _httpClientFactory.CreateClient();
-            client.BaseAddress = new Uri(vippsSettings.BaseUrl);
+            client.BaseAddress = new Uri(vippsSettings.ApiBaseUrl);
 
             HttpResponseMessage response = new HttpResponseMessage();
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "/accesstoken/get");
@@ -68,7 +68,7 @@ namespace Sjop.Services.Vipps
             var PaymentUrl = "/ecomm/v2/payments";
 
             var client = _httpClientFactory.CreateClient();
-            client.BaseAddress = new Uri(vippsSettings.BaseUrl);
+            client.BaseAddress = new Uri(vippsSettings.ApiBaseUrl);
             HttpResponseMessage response = new HttpResponseMessage();
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, PaymentUrl);
 
@@ -86,9 +86,10 @@ namespace Sjop.Services.Vipps
                 },
                 MerchantInfo = new MerchantInfo()
                 {
-                    CallbackPrefix = "https://losol.no/callback",
-                    FallBack = "https://losol.no/fallback",
-                    MerchantSerialNumber = vippsSettings.MerchantSerialNumber
+                    CallbackPrefix = vippsSettings.CallbackBaseUrl,
+                    FallBack = vippsSettings.RedirectUrl,
+                    MerchantSerialNumber = vippsSettings.MerchantSerialNumber,
+                    AuthToken = order.PaymentProviderToken
                 },
                 Transaction = new Transaction()
                 {
@@ -100,12 +101,20 @@ namespace Sjop.Services.Vipps
             };
 
             request.Content = new StringContent(
-                JsonSerializer.Serialize(init, vippsJsonOptions), 
-                Encoding.UTF8, 
+                JsonSerializer.Serialize(init, vippsJsonOptions),
+                Encoding.UTF8,
                 "application/json");
 
             var payRequest = await client.SendAsync(request);
+
+            if (!payRequest.IsSuccessStatusCode)
+            {
+                var error = await payRequest.Content.ReadAsStringAsync();
+                throw new HttpRequestException(error);
+            }
             var payResponse = await payRequest.Content.ReadAsStringAsync();
+
+
             var result = JsonSerializer.Deserialize<InitiatePaymentResponseOk>(payResponse, vippsJsonOptions);
 
             return result;
@@ -114,14 +123,14 @@ namespace Sjop.Services.Vipps
         public async Task<CapturePaymentResponseOk> CapturePayment(Order order, VippsSettings vippsSettings)
         {
             _logger.LogInformation($"*** Vipps Api Client: Capturing payemnt for order {order.Id}");
-            
+
             var CaptureUrl = $"/ecomm/v2/payments/{order.Id}/capture";
-            
+
             // TODO Save this request id?
             var requestId = Guid.NewGuid().ToString();
 
             var client = _httpClientFactory.CreateClient();
-            client.BaseAddress = new Uri(vippsSettings.BaseUrl);
+            client.BaseAddress = new Uri(vippsSettings.ApiBaseUrl);
             HttpResponseMessage response = new HttpResponseMessage();
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, CaptureUrl);
 
@@ -145,8 +154,8 @@ namespace Sjop.Services.Vipps
             };
 
             request.Content = new StringContent(
-                JsonSerializer.Serialize(capture, vippsJsonOptions), 
-                Encoding.UTF8, 
+                JsonSerializer.Serialize(capture, vippsJsonOptions),
+                Encoding.UTF8,
                 "application/json");
 
             var captureRequest = await client.SendAsync(request);
@@ -188,28 +197,32 @@ namespace Sjop.Services.Vipps
 
         }
 
-        public class CapturePaymentRequest {
+        public class CapturePaymentRequest
+        {
             public CapturePaymentMerchantInfo MerchantInfo { get; set; }
             public CapturePaymentTransaction Transaction { get; set; }
 
         }
 
-        public class CapturePaymentResponseOk {
+        public class CapturePaymentResponseOk
+        {
             public string PaymentInstrument { get; set; }
             public string OrderId { get; set; }
             public CapturePaymentResponseTransactionInfo TransactionInfo { get; set; }
             public CapturePaymentResponseTransactionSummary TransactionSummary { get; set; }
         }
 
-        public class CapturePaymentResponseTransactionInfo {
-            public int Amount  { get; set; }
+        public class CapturePaymentResponseTransactionInfo
+        {
+            public int Amount { get; set; }
             public string Status { get; set; }
             public string TimeStamp { get; set; }
             public string TransactionId { get; set; }
             public string TransactionText { get; set; }
         }
 
-        public class CapturePaymentResponseTransactionSummary {
+        public class CapturePaymentResponseTransactionSummary
+        {
             public int CapturedAmount { get; set; }
             public int RefundedAmount { get; set; }
             public int RemainingAmountToCapture { get; set; }
@@ -240,11 +253,13 @@ namespace Sjop.Services.Vipps
 
         }
 
-        public class CapturePaymentMerchantInfo {
+        public class CapturePaymentMerchantInfo
+        {
             public string MerchantSerialNumber { get; set; }
         }
 
-        public class CapturePaymentTransaction {
+        public class CapturePaymentTransaction
+        {
             public int Amount { get; set; }
             public string TransactionText { get; set; }
         }
@@ -265,22 +280,6 @@ namespace Sjop.Services.Vipps
         {
             public string OrderId { get; set; }
             public string Url { get; set; }
-        }
-
-        public class InitiatePaymentResponseError
-        {
-            public string ErrorGroup { get; set; }
-            public string ErrorCode { get; set; }
-            public string ErrorMessage { get; set; }
-            public string ContextId { get; set; }
-        }
-
-        public class ErrorResponse
-        {
-            public string ErrorGroup { get; set; }
-            public string ErrorCode { get; set; }
-            public string ErrorMessage { get; set; }
-            public string ContextId { get; set; }
         }
     }
 }

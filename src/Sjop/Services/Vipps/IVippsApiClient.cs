@@ -9,6 +9,5 @@ namespace Sjop.Services.Vipps
     {
         Task<InitiatePaymentResponseOk> InitiatePayment(Order order, VippsSettings vippsSettings);
         Task<CapturePaymentResponseOk> CapturePayment(Order order, VippsSettings vippsSettings);
-        
     }
 }

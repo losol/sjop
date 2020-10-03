@@ -2,14 +2,13 @@
 
 # Sjop
 
-Sjop is an ecommerce solution written in ASP.NET Core 3.1. 
+Sjop is an ecommerce solution written in ASP.NET Core 3.1.
 
-
-## Setting up Payment providers. 
-
+## Setting up Payment providers.
 
 ### Stripe
-After [getting an Stripe account](https://dashboard.stripe.com/register) you should save your API keys so that the app could reach it. The best way is by using `dotnet user-secrets`, which will override the settings in `appsettings.json`. 
+
+After [getting an Stripe account](https://dashboard.stripe.com/register) you should save your API keys so that the app could reach it. The best way is by using `dotnet user-secrets`, which will override the settings in `appsettings.json`.
 
 ```
 dotnet user-secrets set "Stripe:SecretKey" "sk_test_asdfasdf"
@@ -18,7 +17,8 @@ dotnet user-secrets set "Stripe:WebhookSecret" "whsec_asdf"
 ```
 
 ### Vipps
-For norwegian webshops Vipps payments is supported. 
+
+For norwegian webshops Vipps payments is supported.
 
 ```
 dotnet user-secrets set "Vipps:MerchantSerialNumber" "YOUR_INFO"
@@ -30,20 +30,31 @@ dotnet user-secrets set "Vipps:SubscriptionKey" "YOUR_INFO"
 
 ## Test webhooks
 
-After Stripe has received payment, it sends an webhook to the application which triggers a status change on the order to `paid`. Two possible solutions for letting Stripe reach localhost. 
+After Stripe has received payment, it sends an webhook to the application which triggers a status change on the order to `paid`. Two possible solutions for letting Stripe reach localhost.
 
 ### Using Stripe CLI
 
-After installing Stripe CLI. Use port 5000 to avoid SSL certificate issues. 
+After installing Stripe CLI. Use port 5000 to avoid SSL certificate issues.
 
 ```
 stripe listen --forward-to localhost:5000/webhooks/stripe
 ```
 
-### Using ngrok
+## Test webhooks and callbacks
 
-Set up ngrok to test webhooks. Use port 5000, as SSL forwarding is a premium feature. 
+You will need your application to be available on the internet for testing with both Stripe and Vipps.
+
+The easiest way in development is using `ngrok` or `localtunnel`. Remeber to update appsettings with your url.
+
+### Localtunnel
 
 ```
-Win: ..\ngrok http 5000
+npm install -g localtunnel
+lt --port 8080
+```
+
+### Ngrok
+
+```
+Win: ..\ngrok http 8080
 ```

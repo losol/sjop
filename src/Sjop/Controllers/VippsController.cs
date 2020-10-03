@@ -14,12 +14,13 @@ using Sjop.Config;
 using Sjop.Data;
 using Sjop.Models;
 using Sjop.Services.Vipps;
+using Sjop.Services.Vipps.Models;
 using Sjop.ViewModels;
 
 namespace Sjop.Controllers
 {
     [ApiController]
-    [Route("api/payments/vipps")]
+    [Route("api/v1/payments/vipps")]
     public class VippsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -61,7 +62,33 @@ namespace Sjop.Controllers
 
             var pay = _vippsApiClient.InitiatePayment(order, _vippsSettings);
 
-            return StatusCode(418, "Lag litt kaffe likevel?");
+            return Ok();
+
+        }
+
+        [HttpPost("callback/v2/payments/{orderId}")]
+        public async Task<ActionResult> TransactionUpdate([FromBody] TransactionUpdateCallback callback, [FromRoute] int orderId)
+        {
+            _logger.LogCritical($"*** Received callback from Vipps for order #{orderId} ***");
+            _logger.LogCritical(callback.ToString());
+
+            var order = await _context.Orders.Where(m => m.Id == orderId).FirstOrDefaultAsync();
+            if (order.PaymentProviderToken != Request.Headers["Authorization"])
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            // TODO collect those dollars later! 
+            if (callback.TransactionInfo.Status == "RESERVED")
+            {
+                order.Status = Order.OrderStatus.Paid;
+            }
+            order.AddLog(JsonSerializer.Serialize(callback));
+
+            _context.Orders.Update(order);
+            await _context.SaveChangesAsync();
+
+            return Ok("Thank you Vipps!");
 
         }
 
