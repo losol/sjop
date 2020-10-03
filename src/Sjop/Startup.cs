@@ -54,6 +54,13 @@ namespace Sjop
 
             services.AddHttpClient();
 
+            services.AddCors(o => o.AddPolicy("AllowAll", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
+
             services.AddSingleton<IVippsApiClient, VippsApiClient>();
 
             // Configure cookie policy

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,7 @@ namespace Sjop.Controllers
         // GET: api/v1/products
         [AllowAnonymous]
         [HttpGet]
+        [EnableCors("AllowAll")]
         public async Task<ActionResult<IEnumerable<Product>>> GetProduct()
         {
             return await _context.Products.ToListAsync();
@@ -49,7 +51,7 @@ namespace Sjop.Controllers
         // PUT: api/v1/Products/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        
+
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, Product product)
         {
