@@ -29,11 +29,11 @@ namespace Sjop.Controllers
 
 
         public PaymentController(
-            ApplicationDbContext context, 
-            ILogger<CartController> logger, 
-            Config.StripeSettings stripeSettings, 
-            Site siteSetttings, 
-            IVippsApiClient vippsApiClient, 
+            ApplicationDbContext context,
+            ILogger<CartController> logger,
+            Config.StripeSettings stripeSettings,
+            Site siteSetttings,
+            IVippsApiClient vippsApiClient,
             VippsSettings vippsSettings)
         {
             _context = context;
@@ -71,11 +71,7 @@ namespace Sjop.Controllers
 
                 case PaymentProviderType.Vipps:
                     _logger.LogInformation($"* Pay order #{order.Id} with Vipps ");
-
                     var initiate = await _vippsApiClient.InitiatePayment(order, _vippsSettings);
-                    _logger.LogInformation("** Initate payment request result **");
-                    _logger.LogInformation(initiate.ToString());
-
                     return Ok(initiate);
 
                 default:
@@ -86,15 +82,13 @@ namespace Sjop.Controllers
         [HttpPost("capture-order/{id}")]
         public async Task<ActionResult> CapturePayment([FromRoute] int id)
         {
+            _logger.LogInformation($"*** Capturing payment for order #{id}. ***");
             var order = await _context.Orders
                 .Where(p => p.Id == id)
                 .Include(order => order.OrderLines)
                 .FirstOrDefaultAsync();
 
             var capture = await _vippsApiClient.CapturePayment(order, _vippsSettings);
-            _logger.LogInformation("** Capture request result **");
-            _logger.LogInformation(capture.ToString());
-
             return Ok();
 
         }

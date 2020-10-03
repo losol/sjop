@@ -30,7 +30,7 @@ namespace Sjop.Controllers
         [HttpPost]
         public async Task<ActionResult> Index()
         {
-            _logger.LogDebug("*** Webhook received ***");
+            _logger.LogInformation("*** Stripe webhook received ***");
             var webhookSecret = _stripeSettings.WebhookSecret;
             StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
 
@@ -46,7 +46,7 @@ namespace Sjop.Controllers
                 {
                     case Events.CheckoutSessionCompleted:
                         var session = stripeEvent.Data.Object as Stripe.Checkout.Session;
-                        _logger.LogCritical("** YEAH MONEY COMING **: " + session.ToString());
+                        _logger.LogInformation("Pay me, Pay me, Pay me my money down: " + session.ToString());
 
                         var order = await _context.Orders.Where(m => m.Id == Convert.ToInt32(session.ClientReferenceId)).FirstOrDefaultAsync();
                         order.Status = Models.Order.OrderStatus.Paid;
