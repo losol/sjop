@@ -513,7 +513,7 @@
 
     // Get payment info when order is processed in backend
     .then(function(order) {
-      console.log("Starting payment for order: " + order.id);
+      console.log("Starting payment for order #" + order.id);
       var orderobject = { OrderId: order.id };
       return fetch('api/v1/payment', {
         method: "post",

@@ -70,12 +70,33 @@ namespace Sjop.Controllers
                     return await PayWithStripeElements(order);
 
                 case PaymentProviderType.Vipps:
-                    _logger.LogInformation($"* Pay with Vipps ");
-                    return Ok(await _vippsApiClient.InitiatePayment(order, _vippsSettings));
+                    _logger.LogInformation($"* Pay order #{order.Id} with Vipps ");
+
+                    var initiate = await _vippsApiClient.InitiatePayment(order, _vippsSettings);
+                    _logger.LogInformation("** Initate payment request result **");
+                    _logger.LogInformation(initiate.ToString());
+
+                    return Ok(initiate);
 
                 default:
                     return BadRequest();
             }
+        }
+
+        [HttpPost("capture-order/{id}")]
+        public async Task<ActionResult> CapturePayment([FromRoute] int id)
+        {
+            var order = await _context.Orders
+                .Where(p => p.Id == id)
+                .Include(order => order.OrderLines)
+                .FirstOrDefaultAsync();
+
+            var capture = await _vippsApiClient.CapturePayment(order, _vippsSettings);
+            _logger.LogInformation("** Capture request result **");
+            _logger.LogInformation(capture.ToString());
+
+            return Ok();
+
         }
 
         private async Task<ActionResult> PayWithStripeCheckout(Sjop.Models.Order order)
