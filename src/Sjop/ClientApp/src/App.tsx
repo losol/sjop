@@ -1,7 +1,7 @@
 import React from "react";
-import Header from "./Header";
-import Footer from "./Footer";
-import ProductList from "./ProductList";
+import Header from "./components/shared/Header";
+import Footer from "./components/shared/Footer";
+import ProductList from "./components/products/ProductList";
 
 function App() {
   return (
