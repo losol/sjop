@@ -1,6 +1,6 @@
 import React from "react";
 
-function Product(props: any) {
+function Product(props) {
   return (
     <>
       <div className="rounded overflow-hidden shadow-md m-3">
